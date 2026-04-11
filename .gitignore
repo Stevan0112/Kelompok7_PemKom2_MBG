@@ -1,0 +1,25 @@
+# =========================
+# NETBEANS
+# =========================
+
+# Folder hasil build
+/build/
+/dist/
+
+# Private config NetBeans (jangan dishare)
+/nbproject/private/
+
+# Cache NetBeans
+/nbbuild/
+/nbdist/
+/.nb-gradle/
+
+# File hasil compile Java
+*.class
+
+# Log
+*.log
+
+# OS file
+.DS_Store
+Thumbs.db
