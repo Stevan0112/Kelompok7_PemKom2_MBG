@@ -4,12 +4,14 @@
  */
 package com.pemkom.mbg;
 
-/**
- *
- * @author Lenovo
- */
+
+import com.pemkom.objects.Murid;
+
 public class Main {
-    public static void main(String[] args) {
-        System.out.println("Hello World!");
+  public static void main(String[] args) {
+
+        Murid m1 = new Murid("001", "M001", "Andi", "MA Al Iman");
+
+        System.out.println(m1);
     }
 }
