@@ -10,6 +10,16 @@
         <maven.compiler.release>17</maven.compiler.release>
         <exec.mainClass>com.pemkom.mbg.Main</exec.mainClass>
     </properties>
+    <build>
+    <resources>
+        <resource>
+            <directory>src/main/java</directory>
+            <includes>
+                <include>img/**</include>
+            </includes>
+        </resource>
+    </resources>
+</build>
     <dependencies>
         <!-- Driver NoSQL MongoDB (Pertemuan 5) -->
         <dependency>
@@ -22,6 +32,11 @@
             <groupId>com.fazecast</groupId>
             <artifactId>jSerialComm</artifactId>
             <version>2.10.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.netbeans.external</groupId>
+            <artifactId>AbsoluteLayout</artifactId>
+            <version>RELEASE250</version>
         </dependency>
     </dependencies>
 </project>
