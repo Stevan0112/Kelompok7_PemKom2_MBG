@@ -15,6 +15,9 @@ public class Dashboard extends javax.swing.JFrame {
      */
     public Dashboard() {
         initComponents();
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
+        dashboardPanel.setLayout(new java.awt.BorderLayout());
+        dashboardPanel.add(new DashboardPanel(), java.awt.BorderLayout.CENTER);
     }
 
     /**
@@ -26,21 +29,189 @@ public class Dashboard extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        dashboardPanel = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        roundedButtonManageSiswa = new GUI.RoundedButton();
+        roundedButtonDashboard = new GUI.RoundedButton();
+        roundedButton3 = new GUI.RoundedButton();
+        roundedButton4 = new GUI.RoundedButton();
+        roundedButtonLogout = new GUI.RoundedButton();
+        roundedButton6 = new GUI.RoundedButton();
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        dashboardPanel.setBackground(new java.awt.Color(255, 255, 255));
+        dashboardPanel.setLayout(null);
+        getContentPane().add(dashboardPanel, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 0, 1360, 840));
+
+        jPanel1.setBackground(new java.awt.Color(119, 183, 226));
+
+        roundedButtonManageSiswa.setBackground(new java.awt.Color(48, 55, 80));
+        roundedButtonManageSiswa.setForeground(new java.awt.Color(255, 255, 255));
+        roundedButtonManageSiswa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-manage-24.png"))); // NOI18N
+        roundedButtonManageSiswa.setText("Manage Siswa");
+        roundedButtonManageSiswa.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        roundedButtonManageSiswa.setIconTextGap(15);
+        roundedButtonManageSiswa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                roundedButtonManageSiswaActionPerformed(evt);
+            }
+        });
+
+        roundedButtonDashboard.setBackground(new java.awt.Color(48, 55, 80));
+        roundedButtonDashboard.setForeground(new java.awt.Color(255, 255, 255));
+        roundedButtonDashboard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-home-24 (1).png"))); // NOI18N
+        roundedButtonDashboard.setText("Dashboard");
+        roundedButtonDashboard.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        roundedButtonDashboard.setIconTextGap(15);
+        roundedButtonDashboard.setMargin(new java.awt.Insets(2, 14, 3, 18));
+        roundedButtonDashboard.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                roundedButtonDashboardActionPerformed(evt);
+            }
+        });
+
+        roundedButton3.setBackground(new java.awt.Color(48, 55, 80));
+        roundedButton3.setForeground(new java.awt.Color(255, 255, 255));
+        roundedButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-manage-24.png"))); // NOI18N
+        roundedButton3.setText("Manage Sekolah");
+        roundedButton3.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        roundedButton3.setIconTextGap(15);
+        roundedButton3.setMaximumSize(new java.awt.Dimension(127, 31));
+        roundedButton3.setMinimumSize(new java.awt.Dimension(127, 31));
+        roundedButton3.setPreferredSize(new java.awt.Dimension(127, 31));
+        roundedButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                roundedButton3ActionPerformed(evt);
+            }
+        });
+
+        roundedButton4.setBackground(new java.awt.Color(48, 55, 80));
+        roundedButton4.setForeground(new java.awt.Color(255, 255, 255));
+        roundedButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-manage-24.png"))); // NOI18N
+        roundedButton4.setText("Manage User");
+        roundedButton4.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        roundedButton4.setIconTextGap(15);
+        roundedButton4.setMaximumSize(new java.awt.Dimension(127, 31));
+        roundedButton4.setMinimumSize(new java.awt.Dimension(127, 31));
+        roundedButton4.setPreferredSize(new java.awt.Dimension(127, 31));
+        roundedButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                roundedButton4ActionPerformed(evt);
+            }
+        });
+
+        roundedButtonLogout.setBackground(new java.awt.Color(229, 59, 59));
+        roundedButtonLogout.setForeground(new java.awt.Color(255, 255, 255));
+        roundedButtonLogout.setText("Logout");
+        roundedButtonLogout.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        roundedButtonLogout.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        roundedButtonLogout.setRadius(40);
+        roundedButtonLogout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                roundedButtonLogoutActionPerformed(evt);
+            }
+        });
+
+        roundedButton6.setBackground(new java.awt.Color(48, 55, 80));
+        roundedButton6.setForeground(new java.awt.Color(255, 255, 255));
+        roundedButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-history-24.png"))); // NOI18N
+        roundedButton6.setText("History");
+        roundedButton6.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        roundedButton6.setIconTextGap(20);
+        roundedButton6.setMaximumSize(new java.awt.Dimension(127, 31));
+        roundedButton6.setMinimumSize(new java.awt.Dimension(127, 31));
+        roundedButton6.setPreferredSize(new java.awt.Dimension(127, 31));
+        roundedButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                roundedButton6ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(roundedButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(roundedButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(roundedButtonManageSiswa, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(roundedButtonDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(roundedButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(40, 40, 40)
+                        .addComponent(roundedButtonLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(48, Short.MAX_VALUE))
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(73, 73, 73)
+                .addComponent(roundedButtonDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(32, 32, 32)
+                .addComponent(roundedButtonManageSiswa, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(32, 32, 32)
+                .addComponent(roundedButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(32, 32, 32)
+                .addComponent(roundedButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(32, 32, 32)
+                .addComponent(roundedButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(37, 37, 37)
+                .addComponent(roundedButtonLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(367, Short.MAX_VALUE))
         );
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 230, 880));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void roundedButtonManageSiswaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundedButtonManageSiswaActionPerformed
+         dashboardPanel.removeAll();
+        dashboardPanel.setLayout(new java.awt.BorderLayout());
+        dashboardPanel.add(new ManageSiswa(), java.awt.BorderLayout.CENTER);
+        dashboardPanel.revalidate();
+        dashboardPanel.repaint();
+    }//GEN-LAST:event_roundedButtonManageSiswaActionPerformed
+
+    private void roundedButtonDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundedButtonDashboardActionPerformed
+        dashboardPanel.removeAll();
+        dashboardPanel.setLayout(new java.awt.BorderLayout());
+        dashboardPanel.add(new DashboardPanel(), java.awt.BorderLayout.CENTER);
+        dashboardPanel.revalidate();
+        dashboardPanel.repaint();
+    }//GEN-LAST:event_roundedButtonDashboardActionPerformed
+
+    private void roundedButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundedButton3ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_roundedButton3ActionPerformed
+
+    private void roundedButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundedButton4ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_roundedButton4ActionPerformed
+
+    private void roundedButtonLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundedButtonLogoutActionPerformed
+        int konfirmasi = javax.swing.JOptionPane.showConfirmDialog(
+                this,
+                "Apakah kamu yakin ingin logout?",
+                "Logout",
+                javax.swing.JOptionPane.YES_NO_OPTION
+        );
+
+        if (konfirmasi == javax.swing.JOptionPane.YES_OPTION) {
+            new LoginForm().setVisible(true);
+            dispose();
+        }
+    }//GEN-LAST:event_roundedButtonLogoutActionPerformed
+
+    private void roundedButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundedButton6ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_roundedButton6ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -78,5 +249,13 @@ public class Dashboard extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel dashboardPanel;
+    private javax.swing.JPanel jPanel1;
+    private GUI.RoundedButton roundedButton3;
+    private GUI.RoundedButton roundedButton4;
+    private GUI.RoundedButton roundedButton6;
+    private GUI.RoundedButton roundedButtonDashboard;
+    private GUI.RoundedButton roundedButtonLogout;
+    private GUI.RoundedButton roundedButtonManageSiswa;
     // End of variables declaration//GEN-END:variables
 }
