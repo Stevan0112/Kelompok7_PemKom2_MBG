@@ -14,10 +14,22 @@ public class AddSiswa extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(parent);
+        loadSekolah();
 
         // Mulai baca RFID otomatis
         mulaiScanRFID();
 
+    }
+
+    private void loadSekolah() {
+        com.mongodb.client.MongoDatabase db = com.pemkom.objects.MongoManager.getDatabase();
+        com.mongodb.client.MongoCollection<org.bson.Document> sekolahCollection
+                = db.getCollection("Sekolah");
+
+        sekolah.removeAllItems();
+        for (org.bson.Document doc : sekolahCollection.find()) {
+            sekolah.addItem(doc.getString("namaSekolah"));
+        }
     }
 
     private com.fazecast.jSerialComm.SerialPort rfidPort;
@@ -95,6 +107,11 @@ public class AddSiswa extends javax.swing.JDialog {
         sekolah.setBackground(new java.awt.Color(74, 74, 74));
         sekolah.setForeground(new java.awt.Color(255, 255, 255));
         sekolah.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        sekolah.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sekolahActionPerformed(evt);
+            }
+        });
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
@@ -262,6 +279,10 @@ public class AddSiswa extends javax.swing.JDialog {
     private void UIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UIDActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_UIDActionPerformed
+
+    private void sekolahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sekolahActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_sekolahActionPerformed
 
     /**
      * @param args the command line arguments
