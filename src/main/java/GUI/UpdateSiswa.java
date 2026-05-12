@@ -8,74 +8,30 @@ package GUI;
  *
  * @author LENOVO
  */
-public class AddSiswa extends javax.swing.JDialog {
+public class UpdateSiswa extends javax.swing.JDialog {
 
-    public AddSiswa(java.awt.Frame parent, boolean modal) {
+    private String muridId;
+
+    public UpdateSiswa(java.awt.Frame parent, boolean modal, String id, String namaSiswa, String uidSiswa, String sekolahSiswa) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(parent);
-        loadSekolah();
 
-        // Mulai baca RFID otomatis
-        mulaiScanRFID();
-
+        this.muridId = id;
+        nama.setText(namaSiswa);
+        UID.setText(uidSiswa);
+        loadSekolah(sekolahSiswa);
     }
 
-    private void loadSekolah() {
-        com.pemkom.objects.GenericDAO<com.pemkom.objects.Sekolah> sekolahDAO
-                = new com.pemkom.objects.GenericDAO<>("Sekolah", com.pemkom.objects.Sekolah.class);
+    private void loadSekolah(String sekolahTerpilih) {
+        com.mongodb.client.MongoDatabase db = com.pemkom.objects.MongoManager.getDatabase();
+        com.mongodb.client.MongoCollection<org.bson.Document> col = db.getCollection("Sekolah");
 
         sekolah.removeAllItems();
-        for (com.pemkom.objects.Sekolah s : sekolahDAO.findAll()) {
-            sekolah.addItem(s.getNamaSekolah());
+        for (org.bson.Document doc : col.find()) {
+            sekolah.addItem(doc.getString("namaSekolah"));
         }
-    }
-
-    private com.fazecast.jSerialComm.SerialPort rfidPort;
-
-    private void mulaiScanRFID() {
-        com.fazecast.jSerialComm.SerialPort[] ports = com.fazecast.jSerialComm.SerialPort.getCommPorts();
-
-        if (ports.length == 0) {
-            System.out.println("Tidak ada port tersedia");
-            return;
-        }
-
-        // Otomatis pakai port pertama yang tersedia
-        rfidPort = ports[0];
-        rfidPort.setBaudRate(9600);
-        rfidPort.openPort();
-
-        rfidPort.addDataListener(new com.fazecast.jSerialComm.SerialPortDataListener() {
-            StringBuilder buffer = new StringBuilder();
-
-            @Override
-            public int getListeningEvents() {
-                return com.fazecast.jSerialComm.SerialPort.LISTENING_EVENT_DATA_AVAILABLE;
-            }
-
-            @Override
-            public void serialEvent(com.fazecast.jSerialComm.SerialPortEvent event) {
-                byte[] data = new byte[rfidPort.bytesAvailable()];
-                rfidPort.readBytes(data, data.length);
-                String received = new String(data).trim();
-                buffer.append(received);
-
-                if (buffer.toString().contains("\n") || buffer.length() >= 8) {
-                    String uid = buffer.toString().trim();
-                    buffer.setLength(0);
-                    javax.swing.SwingUtilities.invokeLater(() -> UID.setText(uid));
-                }
-            }
-        });
-    }
-
-    @Override
-    public void dispose() {
-        if (rfidPort != null && rfidPort.isOpen()) {
-            rfidPort.closePort();
-        }
-        super.dispose();
+        sekolah.setSelectedItem(sekolahTerpilih);
     }
 
     /**
@@ -97,7 +53,6 @@ public class AddSiswa extends javax.swing.JDialog {
         roundedButtonOK = new GUI.RoundedButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setBackground(new java.awt.Color(84, 115, 229));
 
         jPanel1.setBackground(new java.awt.Color(84, 115, 229));
 
@@ -161,7 +116,7 @@ public class AddSiswa extends javax.swing.JDialog {
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(84, Short.MAX_VALUE)
+                .addContainerGap(82, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(sekolah, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -191,7 +146,7 @@ public class AddSiswa extends javax.swing.JDialog {
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(UID, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 256, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 226, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(roundedButtonCancel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(roundedButtonOK, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -217,13 +172,23 @@ public class AddSiswa extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void sekolahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sekolahActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_sekolahActionPerformed
+
+    private void UIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UIDActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_UIDActionPerformed
+
+    private void namaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_namaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_namaActionPerformed
+
     private void roundedButtonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundedButtonCancelActionPerformed
         dispose();
-
     }//GEN-LAST:event_roundedButtonCancelActionPerformed
 
     private void roundedButtonOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundedButtonOKActionPerformed
-
         String namaLengkap = nama.getText();
         String uidRfid = UID.getText();
         String namaSekolah = sekolah.getSelectedItem().toString();
@@ -233,27 +198,18 @@ public class AddSiswa extends javax.swing.JDialog {
             return;
         }
 
-        com.pemkom.objects.GenericDAO<com.pemkom.objects.Murid> muridDAO
-                = new com.pemkom.objects.GenericDAO<>("Murid", com.pemkom.objects.Murid.class);
+        com.mongodb.client.MongoDatabase db = com.pemkom.objects.MongoManager.getDatabase();
+        db.getCollection("Murid").updateOne(
+                com.mongodb.client.model.Filters.eq("_id", new org.bson.types.ObjectId(muridId)),
+                new org.bson.Document("$set", new org.bson.Document()
+                        .append("namaLengkap", namaLengkap)
+                        .append("uidRfid", uidRfid)
+                        .append("sekolah", namaSekolah))
+        );
 
-        com.pemkom.objects.Murid murid = new com.pemkom.objects.Murid(uidRfid, namaLengkap, namaSekolah);
-        muridDAO.save(murid);
-
-        javax.swing.JOptionPane.showMessageDialog(this, "Data berhasil disimpan!");
+        javax.swing.JOptionPane.showMessageDialog(this, "Data berhasil diupdate!");
         dispose();
     }//GEN-LAST:event_roundedButtonOKActionPerformed
-
-    private void namaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_namaActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_namaActionPerformed
-
-    private void UIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UIDActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_UIDActionPerformed
-
-    private void sekolahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sekolahActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_sekolahActionPerformed
 
     /**
      * @param args the command line arguments
@@ -269,31 +225,23 @@ public class AddSiswa extends javax.swing.JDialog {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
-
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(AddSiswa.class
-                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-
+            java.util.logging.Logger.getLogger(UpdateSiswa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(AddSiswa.class
-                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-
+            java.util.logging.Logger.getLogger(UpdateSiswa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(AddSiswa.class
-                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
-
+            java.util.logging.Logger.getLogger(UpdateSiswa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(AddSiswa.class
-                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UpdateSiswa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                AddSiswa dialog = new AddSiswa(new javax.swing.JFrame(), true);
+                UpdateSiswa dialog = new UpdateSiswa(new javax.swing.JFrame(), true, "", "", "", "");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -304,7 +252,6 @@ public class AddSiswa extends javax.swing.JDialog {
             }
         });
     }
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField UID;
