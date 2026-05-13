@@ -13,8 +13,9 @@ public class Murid {
     public Murid() {
     }
 
-    public Murid(String uidRfid,  String namaLengkap, String sekolah) {
+    public Murid(String uidRfid, String namaLengkap, String sekolah) {
         this.uidRfid = uidRfid;
+
         this.namaLengkap = namaLengkap;
         this.sekolah = sekolah;
     }
