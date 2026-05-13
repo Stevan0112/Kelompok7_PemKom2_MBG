@@ -8,52 +8,38 @@ package GUI;
  *
  * @author LENOVO
  */
-public class ManageSiswa extends javax.swing.JPanel {
+public class ManageSekolah extends javax.swing.JPanel {
 
     /**
      * Creates new form ManageSiswa
      */
-    public ManageSiswa() {
+    public ManageSekolah() {
         initComponents();
-        loadSiswa();
-        loadComboSekolah();
-        searchSiswa();
-
-        panelKonten.setLayout(new java.awt.GridLayout(0, 3, 5, 5));
-        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
         search.addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
-                    searchSiswa();
+                    searchSekolah();
                 }
             }
         });
 
-        // Search ketika ComboBox berubah
-        Sekolah.addActionListener(e -> searchSiswa());
-        javax.swing.SwingUtilities.invokeLater(() -> loadSiswa());
+        javax.swing.SwingUtilities.invokeLater(() -> loadSekolah());
     }
 
-    private void loadSiswa() {
+    private void loadSekolah() {
         panelKonten.removeAll();
 
         javax.swing.JPanel gridPanel = new javax.swing.JPanel(new java.awt.GridLayout(0, 3, 15, 15));
         gridPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(15, 15, 15, 15));
         gridPanel.setBackground(new java.awt.Color(220, 220, 220));
 
-        com.mongodb.client.MongoDatabase db = com.pemkom.objects.MongoManager.getDatabase();
-        com.mongodb.client.MongoCollection<org.bson.Document> col = db.getCollection("Murid");
+        com.pemkom.objects.GenericDAO<com.pemkom.objects.Sekolah> sekolahDAO
+                = new com.pemkom.objects.GenericDAO<>("Sekolah", com.pemkom.objects.Sekolah.class);
 
-        for (org.bson.Document doc : col.find()) {
-            String objectId = doc.getObjectId("_id").toString();
-            String nama = doc.getString("namaLengkap");
-            String uid = doc.getString("uidRfid");
-            String sekolah = doc.getString("sekolah");
-
-            gridPanel.add(buatCard(objectId, nama, uid, sekolah));
+        for (com.pemkom.objects.Sekolah s : sekolahDAO.findAll()) {
+            gridPanel.add(buatCard(s.getIdSekolah(), s.getNamaSekolah(), s.getAlamat()));
         }
 
         panelKonten.setLayout(new java.awt.BorderLayout());
@@ -62,45 +48,23 @@ public class ManageSiswa extends javax.swing.JPanel {
         panelKonten.repaint();
     }
 
-    private void loadComboSekolah() {
-        com.pemkom.objects.GenericDAO<com.pemkom.objects.Sekolah> sekolahDAO
-                = new com.pemkom.objects.GenericDAO<>("Sekolah", com.pemkom.objects.Sekolah.class);
-
-        Sekolah.addItem("Semua");
-        for (com.pemkom.objects.Sekolah s : sekolahDAO.findAll()) {
-            Sekolah.addItem(s.getNamaSekolah());
-        }
-    }
-
-    private void searchSiswa() {
+    private void searchSekolah() {
         panelKonten.removeAll();
 
         javax.swing.JPanel gridPanel = new javax.swing.JPanel(new java.awt.GridLayout(0, 3, 15, 15));
         gridPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(15, 15, 15, 15));
         gridPanel.setBackground(new java.awt.Color(220, 220, 220));
 
-        com.mongodb.client.MongoDatabase db = com.pemkom.objects.MongoManager.getDatabase();
-        com.mongodb.client.MongoCollection<org.bson.Document> col = db.getCollection("Murid");
+        com.pemkom.objects.GenericDAO<com.pemkom.objects.Sekolah> sekolahDAO
+                = new com.pemkom.objects.GenericDAO<>("Sekolah", com.pemkom.objects.Sekolah.class);
 
         String keyword = search.getText().toLowerCase();
-        String sekolahFilter = Sekolah.getSelectedItem().toString();
 
-        org.bson.conversions.Bson filter = new org.bson.Document();
-
-        if (!sekolahFilter.equals("Semua")) {
-            filter = com.mongodb.client.model.Filters.eq("sekolah", sekolahFilter);
-        }
-
-        for (org.bson.Document doc : col.find(filter)) {
-            String objectId = doc.getObjectId("_id").toString();
-            String nama = doc.getString("namaLengkap");
-            String uid = doc.getString("uidRfid");
-            String sekolah = doc.getString("sekolah");
-
+        for (com.pemkom.objects.Sekolah s : sekolahDAO.findAll()) {
             if (keyword.isEmpty()
-                    || (nama != null && nama.toLowerCase().contains(keyword))
-                    || (uid != null && uid.toLowerCase().contains(keyword))) {
-                gridPanel.add(buatCard(objectId, nama, uid, sekolah));
+                    || s.getNamaSekolah().toLowerCase().contains(keyword)
+                    || s.getAlamat().toLowerCase().contains(keyword)) {
+                gridPanel.add(buatCard(s.getIdSekolah(), s.getNamaSekolah(), s.getAlamat()));
             }
         }
 
@@ -110,7 +74,7 @@ public class ManageSiswa extends javax.swing.JPanel {
         panelKonten.repaint();
     }
 
-    private javax.swing.JPanel buatCard(String objectId, String nama, String uid, String sekolah) {
+    private javax.swing.JPanel buatCard(String idSekolah, String nama, String alamat) {
         javax.swing.JPanel card = new javax.swing.JPanel(new java.awt.BorderLayout(5, 5));
         card.setBackground(new java.awt.Color(50, 65, 80));
         card.setPreferredSize(new java.awt.Dimension(0, 150));
@@ -122,18 +86,18 @@ public class ManageSiswa extends javax.swing.JPanel {
         javax.swing.JPanel infoPanel = new javax.swing.JPanel(new java.awt.GridLayout(3, 1, 2, 2));
         infoPanel.setBackground(new java.awt.Color(50, 65, 80));
 
+        javax.swing.JLabel lblId = new javax.swing.JLabel("ID: " + idSekolah);
+        lblId.setForeground(java.awt.Color.WHITE);
+
         javax.swing.JLabel lblNama = new javax.swing.JLabel("Nama: " + nama);
         lblNama.setForeground(java.awt.Color.WHITE);
 
-        javax.swing.JLabel lblUid = new javax.swing.JLabel("UID: " + uid);
-        lblUid.setForeground(java.awt.Color.WHITE);
+        javax.swing.JLabel lblAlamat = new javax.swing.JLabel("Alamat: " + alamat);
+        lblAlamat.setForeground(java.awt.Color.WHITE);
 
-        javax.swing.JLabel lblSekolah = new javax.swing.JLabel("Sekolah: " + sekolah);
-        lblSekolah.setForeground(java.awt.Color.WHITE);
-
+        infoPanel.add(lblId);
         infoPanel.add(lblNama);
-        infoPanel.add(lblUid);
-        infoPanel.add(lblSekolah);
+        infoPanel.add(lblAlamat);
 
         javax.swing.JPanel btnPanel = new javax.swing.JPanel(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 10, 5));
         btnPanel.setBackground(new java.awt.Color(50, 65, 80));
@@ -144,13 +108,13 @@ public class ManageSiswa extends javax.swing.JPanel {
         btnEdit.setFocusPainted(false);
         btnEdit.setBorderPainted(false);
         btnEdit.addActionListener(e -> {
-            UpdateSiswa dialog = new UpdateSiswa(
+            UpdateSekolah dialog = new UpdateSekolah(
                     (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this),
-                    true, objectId, nama, uid, sekolah
+                    true, idSekolah, nama, alamat
             );
             dialog.setLocationRelativeTo(null);
             dialog.setVisible(true);
-            loadSiswa();
+            loadSekolah();
         });
 
         javax.swing.JButton btnDelete = new javax.swing.JButton("Delete");
@@ -163,12 +127,12 @@ public class ManageSiswa extends javax.swing.JPanel {
                     null, "Hapus " + nama + "?", "Konfirmasi", javax.swing.JOptionPane.YES_NO_OPTION
             );
             if (konfirmasi == javax.swing.JOptionPane.YES_OPTION) {
-                com.pemkom.objects.GenericDAO<com.pemkom.objects.Murid> muridDAO
-                        = new com.pemkom.objects.GenericDAO<>("Murid", com.pemkom.objects.Murid.class);
-                muridDAO.delete(
-                        com.mongodb.client.model.Filters.eq("_id", new org.bson.types.ObjectId(objectId))
+                com.pemkom.objects.GenericDAO<com.pemkom.objects.Sekolah> sekolahDAO
+                        = new com.pemkom.objects.GenericDAO<>("Sekolah", com.pemkom.objects.Sekolah.class);
+                sekolahDAO.delete(
+                        com.mongodb.client.model.Filters.eq("idSekolah", idSekolah)
                 );
-                loadSiswa();
+                loadSekolah();
             }
         });
 
@@ -192,7 +156,6 @@ public class ManageSiswa extends javax.swing.JPanel {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         panelKonten = new javax.swing.JPanel();
-        Sekolah = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
         roundedButtonRefresh = new GUI.RoundedButton();
         roundedButtonAdd2 = new GUI.RoundedButton();
@@ -206,17 +169,9 @@ public class ManageSiswa extends javax.swing.JPanel {
         add(jScrollPane1);
         jScrollPane1.setBounds(0, 130, 1380, 670);
 
-        Sekolah.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                SekolahActionPerformed(evt);
-            }
-        });
-        add(Sekolah);
-        Sekolah.setBounds(1150, 50, 140, 40);
-
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 40)); // NOI18N
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Manage Siswa");
+        jLabel1.setText("Manage Sekolah");
         add(jLabel1);
         jLabel1.setBounds(470, 40, 430, 54);
 
@@ -248,26 +203,21 @@ public class ManageSiswa extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void roundedButtonRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundedButtonRefreshActionPerformed
-        loadSiswa();
+        loadSekolah();
     }//GEN-LAST:event_roundedButtonRefreshActionPerformed
 
     private void roundedButtonAdd2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundedButtonAdd2ActionPerformed
-        AddSiswa dialog = new AddSiswa(
+        AddSekolah dialog = new AddSekolah(
                 (java.awt.Frame) javax.swing.SwingUtilities.getWindowAncestor(this),
                 true
         );
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
-        loadSiswa(); // refresh setelah add
+        loadSekolah(); // refresh setelah add
     }//GEN-LAST:event_roundedButtonAdd2ActionPerformed
-
-    private void SekolahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SekolahActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_SekolahActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> Sekolah;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel panelKonten;
