@@ -8,35 +8,28 @@ package GUI;
  *
  * @author LENOVO
  */
-public class AddSekolah extends javax.swing.JDialog {
+public class UpdateUser extends javax.swing.JDialog {
 
-    public AddSekolah(java.awt.Frame parent, boolean modal) {
+    private String userId;
+
+    public UpdateUser(java.awt.Frame parent, boolean modal, String idUser, String usernameVal, String roleVal) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(parent);
 
-    }
+        this.userId = idUser;
+        Username.setText(usernameVal);
+        Role.setSelectedItem(roleVal);
 
-    private String generateIdSekolah() {
-        com.mongodb.client.MongoDatabase db = com.pemkom.objects.MongoManager.getDatabase();
-        com.mongodb.client.MongoCollection<org.bson.Document> col = db.getCollection("Sekolah");
-
-        int maxId = 0;
-        for (org.bson.Document doc : col.find()) {
-            String idSekolah = doc.getString("idSekolah");
-            if (idSekolah != null && idSekolah.startsWith("S")) {
-                try {
-                    int num = Integer.parseInt(idSekolah.substring(1));
-                    if (num > maxId) {
-                        maxId = num;
-                    }
-                } catch (NumberFormatException e) {
-                    // skip
-                }
-            }
+        // Ambil password lama dari MongoDB
+        com.pemkom.objects.GenericDAO<com.pemkom.objects.User> userDAO
+                = new com.pemkom.objects.GenericDAO<>("User", com.pemkom.objects.User.class);
+        com.pemkom.objects.User userLama = userDAO.findOne(
+                com.mongodb.client.model.Filters.eq("idUser", idUser)
+        );
+        if (userLama != null) {
+            Password.setText(userLama.getPassword());
         }
-
-        return String.format("S%03d", maxId + 1);
     }
 
     /**
@@ -50,11 +43,13 @@ public class AddSekolah extends javax.swing.JDialog {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        Alamat = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        nama = new javax.swing.JTextField();
+        Username = new javax.swing.JTextField();
         roundedButtonCancel = new GUI.RoundedButton();
         roundedButtonOK = new GUI.RoundedButton();
+        jLabel3 = new javax.swing.JLabel();
+        Password = new javax.swing.JTextField();
+        Role = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setBackground(new java.awt.Color(84, 115, 229));
@@ -63,21 +58,15 @@ public class AddSekolah extends javax.swing.JDialog {
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("Nama Sekolah ");
-
-        Alamat.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                AlamatActionPerformed(evt);
-            }
-        });
+        jLabel1.setText("Username");
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("Alamat");
+        jLabel2.setText("Role");
 
-        nama.addActionListener(new java.awt.event.ActionListener() {
+        Username.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                namaActionPerformed(evt);
+                UsernameActionPerformed(evt);
             }
         });
 
@@ -101,6 +90,18 @@ public class AddSekolah extends javax.swing.JDialog {
             }
         });
 
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel3.setText("Password");
+
+        Password.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                PasswordActionPerformed(evt);
+            }
+        });
+
+        Role.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "admin", "sistem", " " }));
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -113,38 +114,40 @@ public class AddSekolah extends javax.swing.JDialog {
                 .addGap(33, 33, 33))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(70, 70, 70)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(Password, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Username, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(11, 11, 11)
-                        .addComponent(Alamat, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(243, 243, 243))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(Role, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addGap(80, 80, 80)
-                    .addComponent(nama, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(81, Short.MAX_VALUE)))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(149, 149, 149)
+                .addGap(96, 96, 96)
                 .addComponent(jLabel1)
-                .addGap(101, 101, 101)
+                .addGap(26, 26, 26)
+                .addComponent(Username, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(14, 14, 14)
+                .addComponent(jLabel3)
+                .addGap(26, 26, 26)
+                .addComponent(Password, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(14, 14, 14)
                 .addComponent(jLabel2)
-                .addGap(18, 18, 18)
-                .addComponent(Alamat, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 228, Short.MAX_VALUE)
+                .addGap(26, 26, 26)
+                .addComponent(Role, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 192, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(roundedButtonCancel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(roundedButtonOK, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(23, 23, 23))
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addGap(185, 185, 185)
-                    .addComponent(nama, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(397, Short.MAX_VALUE)))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -168,34 +171,43 @@ public class AddSekolah extends javax.swing.JDialog {
 
     private void roundedButtonOKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundedButtonOKActionPerformed
 
-        String namaSekolah = nama.getText();
-        String alamatSekolah = Alamat.getText();
+        String usernameVal = Username.getText();
+        String passwordVal = Password.getText();
+        String roleVal = Role.getSelectedItem().toString();
 
-        if (namaSekolah.isEmpty() || alamatSekolah.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Semua field harus diisi!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        if (usernameVal.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Username harus diisi!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        // Generate ID otomatis
-        String idSekolah = generateIdSekolah();
+        com.pemkom.objects.GenericDAO<com.pemkom.objects.User> userDAO
+                = new com.pemkom.objects.GenericDAO<>("User", com.pemkom.objects.User.class);
 
-        com.pemkom.objects.GenericDAO<com.pemkom.objects.Sekolah> sekolahDAO
-                = new com.pemkom.objects.GenericDAO<>("Sekolah", com.pemkom.objects.Sekolah.class);
+        // Ambil password lama kalau password kosong
+        com.pemkom.objects.User userLama = userDAO.findOne(
+                com.mongodb.client.model.Filters.eq("idUser", userId)
+        );
 
-        com.pemkom.objects.Sekolah sekolah = new com.pemkom.objects.Sekolah(idSekolah, namaSekolah, alamatSekolah);
-        sekolahDAO.save(sekolah);
+        String passwordBaru = passwordVal.isEmpty() ? userLama.getPassword() : passwordVal;
 
-        javax.swing.JOptionPane.showMessageDialog(this, "Data berhasil disimpan!");
+        com.pemkom.objects.User userBaru = new com.pemkom.objects.User(userId, usernameVal, passwordBaru, roleVal);
+
+        userDAO.update(
+                com.mongodb.client.model.Filters.eq("idUser", userId),
+                userBaru
+        );
+
+        javax.swing.JOptionPane.showMessageDialog(this, "User berhasil diupdate!");
         dispose();
     }//GEN-LAST:event_roundedButtonOKActionPerformed
 
-    private void namaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_namaActionPerformed
+    private void UsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UsernameActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_namaActionPerformed
+    }//GEN-LAST:event_UsernameActionPerformed
 
-    private void AlamatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AlamatActionPerformed
+    private void PasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PasswordActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_AlamatActionPerformed
+    }//GEN-LAST:event_PasswordActionPerformed
 
     /**
      * @param args the command line arguments
@@ -215,28 +227,34 @@ public class AddSekolah extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(AddSekolah.class
+            java.util.logging.Logger.getLogger(UpdateUser.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(AddSekolah.class
+            java.util.logging.Logger.getLogger(UpdateUser.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(AddSekolah.class
+            java.util.logging.Logger.getLogger(UpdateUser.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(AddSekolah.class
+            java.util.logging.Logger.getLogger(UpdateUser.class
                     .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                AddSekolah dialog = new AddSekolah(new javax.swing.JFrame(), true);
+                UpdateUser dialog = new UpdateUser(new javax.swing.JFrame(), true, "", "", "");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -250,11 +268,13 @@ public class AddSekolah extends javax.swing.JDialog {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextField Alamat;
+    private javax.swing.JTextField Password;
+    private javax.swing.JComboBox<String> Role;
+    private javax.swing.JTextField Username;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JTextField nama;
     private GUI.RoundedButton roundedButtonCancel;
     private GUI.RoundedButton roundedButtonOK;
     // End of variables declaration//GEN-END:variables
