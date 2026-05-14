@@ -34,7 +34,7 @@ public class Dashboard extends javax.swing.JFrame {
         roundedButtonManageSiswa = new GUI.RoundedButton();
         roundedButtonDashboard = new GUI.RoundedButton();
         roundedButtonSekolah = new GUI.RoundedButton();
-        roundedButton4 = new GUI.RoundedButton();
+        roundedButtonUser = new GUI.RoundedButton();
         roundedButtonLogout = new GUI.RoundedButton();
         roundedButton6 = new GUI.RoundedButton();
 
@@ -87,18 +87,18 @@ public class Dashboard extends javax.swing.JFrame {
             }
         });
 
-        roundedButton4.setBackground(new java.awt.Color(48, 55, 80));
-        roundedButton4.setForeground(new java.awt.Color(255, 255, 255));
-        roundedButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-manage-24.png"))); // NOI18N
-        roundedButton4.setText("Manage User");
-        roundedButton4.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        roundedButton4.setIconTextGap(15);
-        roundedButton4.setMaximumSize(new java.awt.Dimension(127, 31));
-        roundedButton4.setMinimumSize(new java.awt.Dimension(127, 31));
-        roundedButton4.setPreferredSize(new java.awt.Dimension(127, 31));
-        roundedButton4.addActionListener(new java.awt.event.ActionListener() {
+        roundedButtonUser.setBackground(new java.awt.Color(48, 55, 80));
+        roundedButtonUser.setForeground(new java.awt.Color(255, 255, 255));
+        roundedButtonUser.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-manage-24.png"))); // NOI18N
+        roundedButtonUser.setText("Manage User");
+        roundedButtonUser.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        roundedButtonUser.setIconTextGap(15);
+        roundedButtonUser.setMaximumSize(new java.awt.Dimension(127, 31));
+        roundedButtonUser.setMinimumSize(new java.awt.Dimension(127, 31));
+        roundedButtonUser.setPreferredSize(new java.awt.Dimension(127, 31));
+        roundedButtonUser.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                roundedButton4ActionPerformed(evt);
+                roundedButtonUserActionPerformed(evt);
             }
         });
 
@@ -138,7 +138,7 @@ public class Dashboard extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(24, 24, 24)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(roundedButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(roundedButtonUser, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(roundedButtonSekolah, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(roundedButtonManageSiswa, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(roundedButtonDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -158,7 +158,7 @@ public class Dashboard extends javax.swing.JFrame {
                 .addGap(32, 32, 32)
                 .addComponent(roundedButtonSekolah, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(32, 32, 32)
-                .addComponent(roundedButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(roundedButtonUser, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(32, 32, 32)
                 .addComponent(roundedButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(37, 37, 37)
@@ -195,9 +195,13 @@ public class Dashboard extends javax.swing.JFrame {
         dashboardPanel.repaint();
     }//GEN-LAST:event_roundedButtonSekolahActionPerformed
 
-    private void roundedButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundedButton4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_roundedButton4ActionPerformed
+    private void roundedButtonUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundedButtonUserActionPerformed
+        dashboardPanel.removeAll();
+        dashboardPanel.setLayout(new java.awt.BorderLayout());
+        dashboardPanel.add(new ManageUser(), java.awt.BorderLayout.CENTER);
+        dashboardPanel.revalidate();
+        dashboardPanel.repaint();
+    }//GEN-LAST:event_roundedButtonUserActionPerformed
 
     private void roundedButtonLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundedButtonLogoutActionPerformed
         int konfirmasi = javax.swing.JOptionPane.showConfirmDialog(
@@ -255,11 +259,11 @@ public class Dashboard extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel dashboardPanel;
     private javax.swing.JPanel jPanel1;
-    private GUI.RoundedButton roundedButton4;
     private GUI.RoundedButton roundedButton6;
     private GUI.RoundedButton roundedButtonDashboard;
     private GUI.RoundedButton roundedButtonLogout;
     private GUI.RoundedButton roundedButtonManageSiswa;
     private GUI.RoundedButton roundedButtonSekolah;
+    private GUI.RoundedButton roundedButtonUser;
     // End of variables declaration//GEN-END:variables
 }

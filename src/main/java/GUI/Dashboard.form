@@ -61,7 +61,7 @@
                       <Group type="102" attributes="0">
                           <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="roundedButton4" min="-2" pref="158" max="-2" attributes="0"/>
+                              <Component id="roundedButtonUser" min="-2" pref="158" max="-2" attributes="0"/>
                               <Component id="roundedButtonSekolah" min="-2" pref="158" max="-2" attributes="0"/>
                               <Component id="roundedButtonManageSiswa" min="-2" pref="158" max="-2" attributes="0"/>
                               <Component id="roundedButtonDashboard" min="-2" pref="158" max="-2" attributes="0"/>
@@ -87,7 +87,7 @@
                   <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
                   <Component id="roundedButtonSekolah" min="-2" pref="46" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
-                  <Component id="roundedButton4" min="-2" pref="46" max="-2" attributes="0"/>
+                  <Component id="roundedButtonUser" min="-2" pref="46" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
                   <Component id="roundedButton6" min="-2" pref="46" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
@@ -167,7 +167,7 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="roundedButtonSekolahActionPerformed"/>
           </Events>
         </Component>
-        <Component class="GUI.RoundedButton" name="roundedButton4">
+        <Component class="GUI.RoundedButton" name="roundedButtonUser">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="50" green="37" red="30" type="rgb"/>
@@ -192,7 +192,7 @@
             </Property>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="roundedButton4ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="roundedButtonUserActionPerformed"/>
           </Events>
         </Component>
         <Component class="GUI.RoundedButton" name="roundedButtonLogout">
