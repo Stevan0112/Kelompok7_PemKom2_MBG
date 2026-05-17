@@ -183,18 +183,22 @@ public class UpdateUser extends javax.swing.JDialog {
         com.pemkom.objects.GenericDAO<com.pemkom.objects.User> userDAO
                 = new com.pemkom.objects.GenericDAO<>("User", com.pemkom.objects.User.class);
 
-        // Ambil password lama kalau password kosong
+        
         com.pemkom.objects.User userLama = userDAO.findOne(
                 com.mongodb.client.model.Filters.eq("idUser", userId)
         );
 
-        String passwordBaru = passwordVal.isEmpty() ? userLama.getPassword() : passwordVal;
+   
+        userLama.setUsername(usernameVal);
+        userLama.setRole(roleVal);
+        if (!passwordVal.isEmpty()) {
+            userLama.setPassword(passwordVal);
+        }
 
-        com.pemkom.objects.User userBaru = new com.pemkom.objects.User(userId, usernameVal, passwordBaru, roleVal);
-
+        // 3. Pakai GenericDAO.update()
         userDAO.update(
                 com.mongodb.client.model.Filters.eq("idUser", userId),
-                userBaru
+                userLama
         );
 
         javax.swing.JOptionPane.showMessageDialog(this, "User berhasil diupdate!");
