@@ -245,23 +245,32 @@ public class UpdateSiswa extends javax.swing.JDialog {
             return;
         }
 
-        com.mongodb.client.MongoDatabase db = com.pemkom.objects.MongoManager.getDatabase();
-        db.getCollection("Murid").updateOne(
+        com.pemkom.objects.GenericDAO<com.pemkom.objects.Murid> muridDAO
+                = new com.pemkom.objects.GenericDAO<>("Murid", com.pemkom.objects.Murid.class);
+
+        // 1. Ambil data lama pakai findOne
+        com.pemkom.objects.Murid muridLama = muridDAO.findOne(
+                com.mongodb.client.model.Filters.eq("_id", new org.bson.types.ObjectId(muridId))
+        );
+
+        // 2. Update hanya field yang perlu
+        muridLama.setNamaLengkap(namaLengkap);
+        muridLama.setUidRfid(uidRfid);
+        muridLama.setSekolah(namaSekolah);
+        // 3. Pakai GenericDAO.update()
+        muridDAO.update(
                 com.mongodb.client.model.Filters.eq("_id", new org.bson.types.ObjectId(muridId)),
-                new org.bson.Document("$set", new org.bson.Document()
-                        .append("namaLengkap", namaLengkap)
-                        .append("uidRfid", uidRfid)
-                        .append("sekolah", namaSekolah))
+                muridLama
         );
 
         javax.swing.JOptionPane.showMessageDialog(this, "Data berhasil diupdate!");
         dispose();
     }//GEN-LAST:event_roundedButtonOKActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
+/**
+ * @param args the command line arguments
+ */
+public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -272,16 +281,29 @@ public class UpdateSiswa extends javax.swing.JDialog {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
-                }
+                
+
+}
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(UpdateSiswa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(UpdateSiswa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(UpdateSiswa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(UpdateSiswa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(UpdateSiswa.class  
+
+.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
+} catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(UpdateSiswa.class  
+
+.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
+} catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(UpdateSiswa.class  
+
+.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
+} catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(UpdateSiswa.class  
+
+.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -291,7 +313,7 @@ public class UpdateSiswa extends javax.swing.JDialog {
                 UpdateSiswa dialog = new UpdateSiswa(new javax.swing.JFrame(), true, "", "", "", "");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
+public void windowClosing(java.awt.event.WindowEvent e) {
                         System.exit(0);
                     }
                 });

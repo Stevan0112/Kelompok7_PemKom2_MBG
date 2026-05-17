@@ -166,12 +166,20 @@ public class UpdateSekolah extends javax.swing.JDialog {
             return;
         }
 
-        com.mongodb.client.MongoDatabase db = com.pemkom.objects.MongoManager.getDatabase();
-        db.getCollection("Sekolah").updateOne(
+        com.pemkom.objects.GenericDAO<com.pemkom.objects.Sekolah> sekolahDAO
+                = new com.pemkom.objects.GenericDAO<>("Sekolah", com.pemkom.objects.Sekolah.class);
+
+        // 1. Ambil data lama pakai findOne
+        com.pemkom.objects.Sekolah sekolahLama = sekolahDAO.findOne(
+                com.mongodb.client.model.Filters.eq("idSekolah", sekolahId)
+        );
+        sekolahLama.setNamaSekolah(namaSekolah);
+        sekolahLama.setAlamat(alamatSekolah);
+
+        // 3. Pakai GenericDAO.update()
+        sekolahDAO.update(
                 com.mongodb.client.model.Filters.eq("idSekolah", sekolahId),
-                new org.bson.Document("$set", new org.bson.Document()
-                        .append("namaSekolah", namaSekolah)
-                        .append("alamat", alamatSekolah))
+                sekolahLama
         );
 
         javax.swing.JOptionPane.showMessageDialog(this, "Data berhasil diupdate!");
