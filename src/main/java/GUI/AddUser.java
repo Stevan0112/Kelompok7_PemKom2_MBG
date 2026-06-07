@@ -180,16 +180,22 @@ public class AddUser extends javax.swing.JDialog {
         String roleVal = Role.getSelectedItem().toString();
 
         if (usernameVal.isEmpty() || passwordVal.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Semua field harus diisi!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            javax.swing.JOptionPane.showMessageDialog(this, "Semua field harus diisi!",
+                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         String idUser = generateIdUser();
 
+        // ENKRIPSI PASSWORD dengan SHA-256 sebelum disimpan
+        String hashedPassword = com.pemkom.objects.SecurityUtils.hashSHA256(passwordVal);
+
         com.pemkom.objects.GenericDAO<com.pemkom.objects.User> userDAO
                 = new com.pemkom.objects.GenericDAO<>("User", com.pemkom.objects.User.class);
 
-        com.pemkom.objects.User user = new com.pemkom.objects.User(idUser, usernameVal, passwordVal, roleVal);
+        com.pemkom.objects.User user = new com.pemkom.objects.User(
+                idUser, usernameVal, hashedPassword, roleVal
+        );
         userDAO.save(user);
 
         javax.swing.JOptionPane.showMessageDialog(this, "User berhasil ditambahkan!");

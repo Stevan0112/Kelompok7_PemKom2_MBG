@@ -1,13 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.pemkom.objects;
 
-/**
- *
- * @author LENOVO
- */
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -17,20 +9,46 @@ import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 
 public class MongoManager {
-
     private static MongoClient mongoClient;
     private static final String DATABASE_NAME = "MBG";
-
+    
+    // URI sudah dienkripsi, tidak ada plaintext di kode!
+    // Ganti nilai ini dengan hasil Encrypted dari Step 3
+    private static final String ENCRYPTED_URI = "GGQfa4ThZf8eqxboImLe7Lyh2iHKDEi0HYTtxE6GEmI=";
+    
     public static MongoDatabase getDatabase() {
         if (mongoClient == null) {
-            mongoClient = MongoClients.create("mongodb://localhost:27017");
+            try {
+                // Dekripsi URI saat runtime
+                String mongoUri = EncryptionUtils.decrypt(ENCRYPTED_URI);
+                
+                CodecRegistry pojoCodecRegistry = CodecRegistries.fromRegistries(
+                    MongoClientSettings.getDefaultCodecRegistry(),
+                    CodecRegistries.fromProviders(
+                        PojoCodecProvider.builder().automatic(true).build()
+                    )
+                );
+                
+                mongoClient = MongoClients.create(mongoUri);
+                
+            } catch (Exception e) {
+                throw new RuntimeException("Gagal dekripsi URI: " + e.getMessage());
+            }
         }
-
+        
         CodecRegistry pojoCodecRegistry = CodecRegistries.fromRegistries(
-                MongoClientSettings.getDefaultCodecRegistry(),
-                CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build())
+            MongoClientSettings.getDefaultCodecRegistry(),
+            CodecRegistries.fromProviders(
+                PojoCodecProvider.builder().automatic(true).build()
+            )
         );
-
+        
         return mongoClient.getDatabase(DATABASE_NAME).withCodecRegistry(pojoCodecRegistry);
+    }
+    
+    public static void close() {
+        if (mongoClient != null) {
+            mongoClient.close();
+        }
     }
 }
