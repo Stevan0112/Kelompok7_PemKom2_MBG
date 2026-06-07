@@ -176,26 +176,30 @@ public class UpdateUser extends javax.swing.JDialog {
         String roleVal = Role.getSelectedItem().toString();
 
         if (usernameVal.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Username harus diisi!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            javax.swing.JOptionPane.showMessageDialog(this, "Username harus diisi!",
+                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         com.pemkom.objects.GenericDAO<com.pemkom.objects.User> userDAO
                 = new com.pemkom.objects.GenericDAO<>("User", com.pemkom.objects.User.class);
 
-        
         com.pemkom.objects.User userLama = userDAO.findOne(
                 com.mongodb.client.model.Filters.eq("idUser", userId)
         );
 
-   
-        userLama.setUsername(usernameVal);
-        userLama.setRole(roleVal);
+        // Hash password baru, kalau kosong pakai hash lama
+        String passwordBaru;
         if (!passwordVal.isEmpty()) {
-            userLama.setPassword(passwordVal);
+            passwordBaru = com.pemkom.objects.SecurityUtils.hashSHA256(passwordVal);
+        } else {
+            passwordBaru = userLama.getPassword(); // tetap pakai hash lama
         }
 
-        // 3. Pakai GenericDAO.update()
+        userLama.setUsername(usernameVal);
+        userLama.setPassword(passwordBaru);
+        userLama.setRole(roleVal);
+
         userDAO.update(
                 com.mongodb.client.model.Filters.eq("idUser", userId),
                 userLama
@@ -203,6 +207,7 @@ public class UpdateUser extends javax.swing.JDialog {
 
         javax.swing.JOptionPane.showMessageDialog(this, "User berhasil diupdate!");
         dispose();
+
     }//GEN-LAST:event_roundedButtonOKActionPerformed
 
     private void UsernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_UsernameActionPerformed
