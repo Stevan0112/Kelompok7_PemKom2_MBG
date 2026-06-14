@@ -127,7 +127,6 @@ public class LoginForm extends javax.swing.JFrame {
         String username = jTextField1.getText();
         String password = new String(jPasswordField1.getPassword());
 
-        // Hash password input sebelum dicocokkan
         String hashedPassword = com.pemkom.objects.SecurityUtils.hashSHA256(password);
 
         com.pemkom.objects.GenericDAO<com.pemkom.objects.User> userDAO
@@ -141,12 +140,23 @@ public class LoginForm extends javax.swing.JFrame {
         );
 
         if (user != null) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Login Berhasil!");
-            new Dashboard().setVisible(true);
-            dispose();
+            String role = user.getRole();
+
+            if (role.equals("admin")) {
+                new Dashboard().setVisible(true);
+                dispose();
+            } else if (role.equals("sistem")) {
+                new AttendancePage().setVisible(true);
+                dispose();
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        "Role tidak dikenali!", "Error",
+                        javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
         } else {
-            javax.swing.JOptionPane.showMessageDialog(this, "Username atau Password salah!",
-                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            javax.swing.JOptionPane.showMessageDialog(this,
+                    "Username atau Password salah!", "Error",
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 

@@ -68,7 +68,8 @@ public class DashboardPanel extends javax.swing.JPanel {
         add(jLabel2);
         jLabel2.setBounds(150, 281, 218, 32);
 
-        roundedPanel1.setForeground(new java.awt.Color(237, 238, 252));
+        roundedPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        roundedPanel1.setForeground(new java.awt.Color(255, 255, 255));
         roundedPanel1.setAutoscrolls(true);
         roundedPanel1.setBackgroundColor(new java.awt.Color(237, 238, 252));
 
