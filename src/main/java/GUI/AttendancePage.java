@@ -10,11 +10,110 @@ package GUI;
  */
 public class AttendancePage extends javax.swing.JFrame {
 
-    /**
-     * Creates new form AttendancePage
-     */
+    private Thread clockThread;
+
     public AttendancePage() {
         initComponents();
+        initClock();
+        initRFID();
+        setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
+        java.net.URL imgURL = getClass().getResource("/img/mbg.png");
+
+        if (imgURL != null) {
+            // 2. Ubah menjadi objek ImageIcon
+            javax.swing.ImageIcon iconAsli = new javax.swing.ImageIcon(imgURL);
+
+            // 3. Perkecil ukurannya menjadi 24 x 24 piksel
+            java.awt.Image image = iconAsli.getImage();
+            java.awt.Image imageDiperkecil = image.getScaledInstance(133, 100, java.awt.Image.SCALE_SMOOTH);
+
+            // 4. Masukkan gambar yang sudah kecil ke JLabel atau JButton Anda
+            jLabel1.setIcon(new javax.swing.ImageIcon(imageDiperkecil));
+        } else {
+            System.out.println("Gambar tidak ditemukan! Periksa kembali folder/nama file.");
+        }
+    }
+
+    private void initClock() {
+        com.pemkom.objects.services.DigitalClockService service
+                = new com.pemkom.objects.services.DigitalClockService(
+                        lblJam, "EEEE, d MMMM yyyy  HH:mm:ss"
+                );
+
+        clockThread = service.getThread();
+        clockThread.setName("Thread-Jam-MBG");
+        clockThread.setDaemon(true); // tidak menahan JVM saat app ditutup
+        clockThread.start();
+
+        System.out.println("Clock Thread dimulai: " + clockThread.getName());
+    }
+
+    private com.pemkom.objects.serial.SerialDataHandler<String> rfidHandler;
+
+    private void initRFID() {
+        com.pemkom.objects.services.SerialService serial
+                = com.pemkom.objects.services.SerialService.getInstance();
+
+        // Daftarkan handler - pakai variable agar bisa di-remove nanti
+        rfidHandler = uid -> {
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                txtUID.setText(uid);
+                cariDanCatatAbsensi(uid);
+            });
+        };
+
+        serial.addHandler(rfidHandler);
+
+        // Ganti COM3 sesuai port RFID reader kamu
+        serial.connect("COM3", 9600);
+    }
+
+    private void cariDanCatatAbsensi(String uid) {
+        com.pemkom.objects.GenericDAO<com.pemkom.objects.Murid> muridDAO
+                = new com.pemkom.objects.GenericDAO<>("Murid", com.pemkom.objects.Murid.class);
+
+        com.pemkom.objects.Murid murid = muridDAO.findOne(
+                com.mongodb.client.model.Filters.eq("uidRfid", uid)
+        );
+
+        if (murid != null) {
+            lblNama.setText("Nama: " + murid.getNamaLengkap());
+            lblSekolah.setText("Sekolah: " + murid.getSekolah());
+            lblStatus.setText("Status: HADIR ✓");
+
+            // Simpan log absensi ke MongoDB
+            com.pemkom.objects.GenericDAO<com.pemkom.objects.LogAbsensi> logDAO
+                    = new com.pemkom.objects.GenericDAO<>("Log Absensi",
+                            com.pemkom.objects.LogAbsensi.class);
+
+            com.pemkom.objects.LogAbsensi log = new com.pemkom.objects.LogAbsensi(
+                    java.util.UUID.randomUUID().toString(),
+                    uid,
+                    java.time.LocalDateTime.now(),
+                    "Hadir"
+            );
+            logDAO.save(log);
+
+        } else {
+            lblNama.setText("Nama: -");
+            lblSekolah.setText("Sekolah: -");
+            lblStatus.setText("Status: Kartu tidak dikenali!");
+        }
+    }
+
+// Bersihkan saat halaman ditutup
+    @Override
+    public void dispose() {
+        if (clockThread != null) {
+            clockThread.interrupt();
+        }
+
+        com.pemkom.objects.services.SerialService serial
+                = com.pemkom.objects.services.SerialService.getInstance();
+        serial.removeHandler(rfidHandler);
+        serial.disconnect();
+
+        super.dispose();
     }
 
     /**
@@ -26,18 +125,165 @@ public class AttendancePage extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        lblJam = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        txtUID = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        lblNama = new javax.swing.JLabel();
+        lblSekolah = new javax.swing.JLabel();
+        lblStatus = new javax.swing.JLabel();
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(255, 255, 255));
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPanel1.setBackground(new java.awt.Color(0, 51, 102));
+
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setText("SISTEM ABSENSI");
+
+        lblJam.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        lblJam.setForeground(new java.awt.Color(255, 255, 255));
+        lblJam.setText("jLabel3");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(86, 86, 86)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(331, 331, 331)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 404, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 248, Short.MAX_VALUE)
+                .addComponent(lblJam, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(31, 31, 31))
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 142, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(35, 35, 35)
+                        .addComponent(jLabel2))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(58, 58, 58)
+                        .addComponent(lblJam)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1560, -1));
+
+        jPanel2.setBackground(new java.awt.Color(51, 153, 255));
+
+        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel4.setText("SILAHKAN TAP KARTU RFID ANDA");
+
+        txtUID.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        txtUID.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-card-100.png"))); // NOI18N
+
+        jPanel3.setBackground(new java.awt.Color(102, 204, 255));
+
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel5.setText("Nama Lengkap  :");
+
+        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel6.setText("Sekolah              :");
+
+        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel7.setText("Status                 :");
+
+        lblNama.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+
+        lblSekolah.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+
+        lblStatus.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 369, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblSekolah, javax.swing.GroupLayout.PREFERRED_SIZE, 369, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblNama, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap(19, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(28, 28, 28)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(lblNama))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(lblSekolah))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(lblStatus))
+                .addContainerGap(39, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(586, 586, 586)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jLabel4)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                            .addComponent(jLabel3)
+                            .addGap(152, 152, 152)))
+                    .addComponent(txtUID, javax.swing.GroupLayout.PREFERRED_SIZE, 407, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(511, Short.MAX_VALUE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(495, 495, 495))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(64, 64, 64)
+                .addComponent(jLabel3)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel4)
+                .addGap(18, 18, 18)
+                .addComponent(txtUID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(54, 54, 54)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(186, Short.MAX_VALUE))
+        );
+
+        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 140, 1560, 660));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -78,5 +324,20 @@ public class AttendancePage extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JLabel lblJam;
+    private javax.swing.JLabel lblNama;
+    private javax.swing.JLabel lblSekolah;
+    private javax.swing.JLabel lblStatus;
+    private javax.swing.JTextField txtUID;
     // End of variables declaration//GEN-END:variables
 }

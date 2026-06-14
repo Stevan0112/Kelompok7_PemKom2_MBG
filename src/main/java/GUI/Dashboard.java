@@ -4,20 +4,16 @@
  */
 package GUI;
 
-/**
- *
- * @author LENOVO
- */
 public class Dashboard extends javax.swing.JFrame {
 
-    /**
-     * Creates new form Dashboard
-     */
+    
+
     public Dashboard() {
         initComponents();
         setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
         dashboardPanel.setLayout(new java.awt.BorderLayout());
         dashboardPanel.add(new DashboardPanel(), java.awt.BorderLayout.CENTER);
+       
     }
 
     /**
