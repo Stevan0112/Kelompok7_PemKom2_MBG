@@ -13,7 +13,7 @@ public class Dashboard extends javax.swing.JFrame {
         setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
         dashboardPanel.setLayout(new java.awt.BorderLayout());
         dashboardPanel.add(new DashboardPanel(), java.awt.BorderLayout.CENTER);
-       
+        
     }
 
     /**

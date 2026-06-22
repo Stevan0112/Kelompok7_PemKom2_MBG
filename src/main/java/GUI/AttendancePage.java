@@ -79,7 +79,7 @@ public class AttendancePage extends javax.swing.JFrame {
         if (murid != null) {
             lblNama.setText("Nama: " + murid.getNamaLengkap());
             lblSekolah.setText("Sekolah: " + murid.getSekolah());
-            lblStatus.setText("Status: HADIR ✓");
+            lblStatus.setText("Status: HADIR ");
 
             // Simpan log absensi ke MongoDB
             com.pemkom.objects.GenericDAO<com.pemkom.objects.LogAbsensi> logDAO
@@ -140,6 +140,7 @@ public class AttendancePage extends javax.swing.JFrame {
         lblNama = new javax.swing.JLabel();
         lblSekolah = new javax.swing.JLabel();
         lblStatus = new javax.swing.JLabel();
+        roundedButton1 = new GUI.RoundedButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
@@ -250,24 +251,38 @@ public class AttendancePage extends javax.swing.JFrame {
                 .addContainerGap(39, Short.MAX_VALUE))
         );
 
+        roundedButton1.setBackground(new java.awt.Color(229, 59, 59));
+        roundedButton1.setForeground(new java.awt.Color(255, 255, 255));
+        roundedButton1.setText("Logout");
+        roundedButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                roundedButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(586, 586, 586)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(jLabel4)
-                        .addGroup(jPanel2Layout.createSequentialGroup()
-                            .addComponent(jLabel3)
-                            .addGap(152, 152, 152)))
-                    .addComponent(txtUID, javax.swing.GroupLayout.PREFERRED_SIZE, 407, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap(511, Short.MAX_VALUE)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(495, 495, 495))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(586, 586, 586)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addComponent(jLabel4)
+                                .addGroup(jPanel2Layout.createSequentialGroup()
+                                    .addComponent(jLabel3)
+                                    .addGap(152, 152, 152)))
+                            .addComponent(txtUID, javax.swing.GroupLayout.PREFERRED_SIZE, 407, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(42, 42, 42)
+                        .addComponent(roundedButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -280,13 +295,29 @@ public class AttendancePage extends javax.swing.JFrame {
                 .addComponent(txtUID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(54, 54, 54)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(186, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 108, Short.MAX_VALUE)
+                .addComponent(roundedButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(38, 38, 38))
         );
 
         getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 140, 1560, 660));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void roundedButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundedButton1ActionPerformed
+        int konfirmasi = javax.swing.JOptionPane.showConfirmDialog(
+                this,
+                "Apakah kamu yakin ingin logout?",
+                "Logout",
+                javax.swing.JOptionPane.YES_NO_OPTION
+        );
+
+        if (konfirmasi == javax.swing.JOptionPane.YES_OPTION) {
+            new LoginForm().setVisible(true);
+            dispose();
+        }
+    }//GEN-LAST:event_roundedButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -338,6 +369,7 @@ public class AttendancePage extends javax.swing.JFrame {
     private javax.swing.JLabel lblNama;
     private javax.swing.JLabel lblSekolah;
     private javax.swing.JLabel lblStatus;
+    private GUI.RoundedButton roundedButton1;
     private javax.swing.JTextField txtUID;
     // End of variables declaration//GEN-END:variables
 }
