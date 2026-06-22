@@ -63,6 +63,13 @@ public class AttendancePage extends javax.swing.JFrame {
         };
 
         serial.addHandler(rfidHandler);
+        txtUID.addActionListener(e -> {
+            String dummyUID = txtUID.getText().trim();
+            if (!dummyUID.isEmpty()) {
+                com.pemkom.objects.services.SerialService.getInstance()
+                        .simulateBroadcast(dummyUID);
+            }
+        });
 
         // Ganti COM3 sesuai port RFID reader kamu
         serial.connect("COM3", 9600);
@@ -77,9 +84,9 @@ public class AttendancePage extends javax.swing.JFrame {
         );
 
         if (murid != null) {
-            lblNama.setText("Nama: " + murid.getNamaLengkap());
-            lblSekolah.setText("Sekolah: " + murid.getSekolah());
-            lblStatus.setText("Status: HADIR ");
+            lblNama.setText(murid.getNamaLengkap());
+            lblSekolah.setText(murid.getSekolah());
+            lblStatus.setText("HADIR");
 
             // Simpan log absensi ke MongoDB
             com.pemkom.objects.GenericDAO<com.pemkom.objects.LogAbsensi> logDAO
@@ -95,9 +102,9 @@ public class AttendancePage extends javax.swing.JFrame {
             logDAO.save(log);
 
         } else {
-            lblNama.setText("Nama: -");
-            lblSekolah.setText("Sekolah: -");
-            lblStatus.setText("Status: Kartu tidak dikenali!");
+            lblNama.setText("-");
+            lblSekolah.setText("-");
+            lblStatus.setText("Kartu tidak dikenali!");
         }
     }
 
