@@ -15,7 +15,8 @@ public class SerialService {
     private final List<SerialDataHandler<String>> handlers = new ArrayList<>();
 
     // Singleton - constructor private
-    private SerialService() {}
+    private SerialService() {
+    }
 
     public static synchronized SerialService getInstance() {
         if (instance == null) {
@@ -35,12 +36,14 @@ public class SerialService {
     }
 
     public boolean connect(String portName, int baudRate) {
-        if (activePort != null && activePort.isOpen()) return true;
+        if (activePort != null && activePort.isOpen()) {
+            return true;
+        }
 
         activePort = SerialPort.getCommPort(portName);
         activePort.setBaudRate(baudRate);
         activePort.setComPortTimeouts(
-            SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 1000, 0
+                SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 1000, 0
         );
 
         if (activePort.openPort()) {
@@ -62,14 +65,19 @@ public class SerialService {
 
             @Override
             public void serialEvent(SerialPortEvent event) {
-                if (event.getEventType() !=
-                    SerialPort.LISTENING_EVENT_DATA_AVAILABLE) return;
+                if (event.getEventType()
+                        != SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
+                    return;
+                }
                 try (Scanner scanner = new Scanner(activePort.getInputStream())) {
                     if (scanner.hasNextLine()) {
                         String data = scanner.nextLine().trim();
-                        if (!data.isEmpty()) broadcast(data);
+                        if (!data.isEmpty()) {
+                            broadcast(data);
+                        }
                     }
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                }
             }
         });
     }
@@ -91,4 +99,11 @@ public class SerialService {
     public boolean isConnected() {
         return activePort != null && activePort.isOpen();
     }
+
+
+    public void simulateBroadcast(String dummyData) {
+        System.out.println("SIMULASI: Menerima UID " + dummyData);
+        broadcast(dummyData); // memanggil metode privat yang sudah ada
+    }
+
 }
