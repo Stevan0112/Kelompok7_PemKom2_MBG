@@ -96,7 +96,7 @@ public class AttendancePage extends javax.swing.JFrame {
             com.pemkom.objects.LogAbsensi log = new com.pemkom.objects.LogAbsensi(
                     java.util.UUID.randomUUID().toString(),
                     uid,
-                    java.time.LocalDateTime.now(),
+                    new java.util.Date(),
                     "Hadir"
             );
             logDAO.save(log);
