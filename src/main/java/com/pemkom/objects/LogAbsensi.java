@@ -4,19 +4,19 @@
  */
 package com.pemkom.objects;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 public class LogAbsensi {
 
     private String idLog;
     private String uidRfid;
-    private LocalDateTime waktuTap;
+    private Date waktuTap;  // ganti ke java.util.Date
     private String status;
 
     public LogAbsensi() {
     }
 
-    public LogAbsensi(String idLog, String uidRfid, LocalDateTime waktuTap, String status) {
+    public LogAbsensi(String idLog, String uidRfid, Date waktuTap, String status) {
         this.idLog = idLog;
         this.uidRfid = uidRfid;
         this.waktuTap = waktuTap;
@@ -39,11 +39,11 @@ public class LogAbsensi {
         this.uidRfid = uidRfid;
     }
 
-    public LocalDateTime getWaktuTap() {
+    public Date getWaktuTap() {
         return waktuTap;
     }
 
-    public void setWaktuTap(LocalDateTime waktuTap) {
+    public void setWaktuTap(Date waktuTap) {
         this.waktuTap = waktuTap;
     }
 
@@ -53,15 +53,5 @@ public class LogAbsensi {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    @Override
-    public String toString() {
-        return "LogAbsensi{" +
-                "idLog='" + idLog + '\'' +
-                ", uidRfid='" + uidRfid + '\'' +
-                ", waktuTap=" + waktuTap +
-                ", status='" + status + '\'' +
-                '}';
     }
 }

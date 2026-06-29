@@ -142,7 +142,7 @@ public class Dashboard extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(40, 40, 40)
                         .addComponent(roundedButtonLogout, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(48, Short.MAX_VALUE))
+                .addContainerGap(36, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -214,7 +214,11 @@ public class Dashboard extends javax.swing.JFrame {
     }//GEN-LAST:event_roundedButtonLogoutActionPerformed
 
     private void roundedButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundedButton6ActionPerformed
-        // TODO add your handling code here:
+         dashboardPanel.removeAll();
+        dashboardPanel.setLayout(new java.awt.BorderLayout());
+        dashboardPanel.add(new LogAbsensi(), java.awt.BorderLayout.CENTER);
+        dashboardPanel.revalidate();
+        dashboardPanel.repaint();
     }//GEN-LAST:event_roundedButton6ActionPerformed
 
     /**
