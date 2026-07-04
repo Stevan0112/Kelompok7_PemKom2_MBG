@@ -16,6 +16,13 @@
             <directory>src/main/java</directory>
             <includes>
                 <include>img/**</include>
+                <include>**/*.properties</include>
+            </includes>
+        </resource>
+        <resource>
+            <directory>src/main/resources</directory>
+            <includes>
+                <include>**/*.properties</include>
             </includes>
         </resource>
     </resources>
@@ -44,9 +51,10 @@
             <version>1.4</version>
         </dependency>
         <dependency>
-        <groupId>com.fazecast</groupId>
-        <artifactId>jSerialComm</artifactId>
-        <version>2.10.4</version>
-    </dependency>
+            <groupId>com.fazecast</groupId>
+            <artifactId>jSerialComm</artifactId>
+            <version>2.10.4</version>
+        </dependency>
+    
     </dependencies>
 </project>

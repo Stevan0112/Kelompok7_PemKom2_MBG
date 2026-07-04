@@ -4,11 +4,13 @@
  */
 package GUI;
 
+import com.pemkom.objects.services.I18nService;
+
 /**
  *
  * @author LENOVO
  */
-public class ManageSiswa extends javax.swing.JPanel {
+public class ManageSiswa extends javax.swing.JPanel implements I18nService.I18nChangeListener {
 
     /**
      * Creates new form ManageSiswa
@@ -18,11 +20,9 @@ public class ManageSiswa extends javax.swing.JPanel {
         loadSiswa();
         loadComboSekolah();
         searchSiswa();
-
         panelKonten.setLayout(new java.awt.GridLayout(0, 3, 5, 5));
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-
         search.addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -31,10 +31,20 @@ public class ManageSiswa extends javax.swing.JPanel {
                 }
             }
         });
-
-        // Search ketika ComboBox berubah
         Sekolah.addActionListener(e -> searchSiswa());
         javax.swing.SwingUtilities.invokeLater(() -> loadSiswa());
+        I18nService.registerListener(this); // ← tambah ini
+        onLanguageChanged();                // ← tambah ini
+    }
+
+    @Override
+    public void onLanguageChanged() {
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            jLabel1.setText(I18nService.get("ui.manage.siswa.title"));
+            roundedButtonAdd2.setText(I18nService.get("ui.btn.add"));
+            this.revalidate();
+            this.repaint();
+        });
     }
 
     private void loadSiswa() {

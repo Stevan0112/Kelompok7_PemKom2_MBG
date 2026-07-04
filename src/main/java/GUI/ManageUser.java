@@ -4,18 +4,19 @@
  */
 package GUI;
 
+import com.pemkom.objects.services.I18nService;
+
 /**
  *
  * @author LENOVO
  */
-public class ManageUser extends javax.swing.JPanel {
+public class ManageUser extends javax.swing.JPanel implements I18nService.I18nChangeListener {
 
     /**
      * Creates new form ManageSiswa
      */
     public ManageUser() {
         initComponents();
-
         search.addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -24,19 +25,34 @@ public class ManageUser extends javax.swing.JPanel {
                 }
             }
         });
-
         javax.swing.SwingUtilities.invokeLater(() -> loadUser());
+        I18nService.registerListener(this);
+        onLanguageChanged();
     }
 
-    private void loadUser() {
+    @Override
+    public void onLanguageChanged() {
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            jLabel1.setText(I18nService.get("ui.manage.user.title"));
+            roundedButtonAdd2.setText(I18nService.get("ui.btn.add"));
+            this.revalidate();
+            this.repaint();
+        });
+    }
+
+private void loadUser() {
         panelKonten.removeAll();
 
         javax.swing.JPanel gridPanel = new javax.swing.JPanel(new java.awt.GridLayout(0, 3, 15, 15));
         gridPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(15, 15, 15, 15));
         gridPanel.setBackground(new java.awt.Color(220, 220, 220));
 
-        com.pemkom.objects.GenericDAO<com.pemkom.objects.User> userDAO
-                = new com.pemkom.objects.GenericDAO<>("User", com.pemkom.objects.User.class);
+        com
+
+.pemkom.objects.GenericDAO<com.pemkom.objects.User> userDAO
+                = new com.pemkom.objects.GenericDAO<>("User", com.pemkom.objects.User.class  
+
+);
 
         for (com.pemkom.objects.User u : userDAO.findAll()) {
             gridPanel.add(buatCard(u.getIdUser(), u.getUsername(), u.getRole()));
@@ -55,8 +71,12 @@ public class ManageUser extends javax.swing.JPanel {
         gridPanel.setBorder(javax.swing.BorderFactory.createEmptyBorder(15, 15, 15, 15));
         gridPanel.setBackground(new java.awt.Color(220, 220, 220));
 
-        com.pemkom.objects.GenericDAO<com.pemkom.objects.User> userDAO
-                = new com.pemkom.objects.GenericDAO<>("User", com.pemkom.objects.User.class);
+        com
+
+.pemkom.objects.GenericDAO<com.pemkom.objects.User> userDAO
+                = new com.pemkom.objects.GenericDAO<>("User", com.pemkom.objects.User.class  
+
+);
 
         String keyword = search.getText().toLowerCase();
 

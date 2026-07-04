@@ -4,18 +4,19 @@
  */
 package GUI;
 
+import com.pemkom.objects.services.I18nService;
+
 /**
  *
  * @author LENOVO
  */
-public class ManageSekolah extends javax.swing.JPanel {
+public class ManageSekolah extends javax.swing.JPanel implements I18nService.I18nChangeListener {
 
     /**
      * Creates new form ManageSiswa
      */
     public ManageSekolah() {
         initComponents();
-
         search.addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -24,8 +25,19 @@ public class ManageSekolah extends javax.swing.JPanel {
                 }
             }
         });
-
         javax.swing.SwingUtilities.invokeLater(() -> loadSekolah());
+        I18nService.registerListener(this); // ← tambah
+        onLanguageChanged();                // ← tambah
+    }
+
+    @Override
+    public void onLanguageChanged() {
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            jLabel1.setText(I18nService.get("ui.manage.sekolah.title"));
+            roundedButtonAdd2.setText(I18nService.get("ui.btn.add"));
+            this.revalidate();
+            this.repaint();
+        });
     }
 
     private void loadSekolah() {

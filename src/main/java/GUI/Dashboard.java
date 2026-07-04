@@ -4,18 +4,45 @@
  */
 package GUI;
 
-public class Dashboard extends javax.swing.JFrame {
+import com.pemkom.objects.services.I18nService;
+import javax.swing.SwingUtilities;
 
-    
+public class Dashboard extends javax.swing.JFrame implements I18nService.I18nChangeListener {
+
+    private javax.swing.JPanel currentPanel;
 
     public Dashboard() {
         initComponents();
         setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
+
+        // Load bahasa tersimpan saat aplikasi dibuka
+        String savedLang = java.util.prefs.Preferences
+                .userNodeForPackage(settings.class)
+                .get("LANGUAGE", "id");
+        I18nService.setLocale(new java.util.Locale(savedLang));
+
         dashboardPanel.setLayout(new java.awt.BorderLayout());
         dashboardPanel.add(new DashboardPanel(), java.awt.BorderLayout.CENTER);
-        
+        I18nService.registerListener(this);
+        onLanguageChanged();
     }
 
+    @Override
+    public void onLanguageChanged() {
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            roundedButtonDashboard.setText(I18nService.get("ui.btn.dashboard"));
+            roundedButtonManageSiswa.setText(I18nService.get("ui.btn.manageSiswa"));
+            roundedButtonSekolah.setText(I18nService.get("ui.btn.manageSekolah"));
+            roundedButtonUser.setText(I18nService.get("ui.btn.manageUser"));
+            roundedButton6.setText(I18nService.get("ui.btn.history"));
+            roundedButtonSettings.setText(I18nService.get("ui.btn.settings"));
+            roundedButtonLogout.setText(I18nService.get("ui.btn.logout"));
+            this.revalidate();
+            this.repaint();
+        });
+    }
+
+    // ... sisa kode Dashboard (initComponents, action handlers, dll)
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -187,33 +214,41 @@ public class Dashboard extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void roundedButtonManageSiswaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundedButtonManageSiswaActionPerformed
+        ManageSiswa panel = new ManageSiswa();
+        currentPanel = panel;
         dashboardPanel.removeAll();
         dashboardPanel.setLayout(new java.awt.BorderLayout());
-        dashboardPanel.add(new ManageSiswa(), java.awt.BorderLayout.CENTER);
+        dashboardPanel.add(panel, java.awt.BorderLayout.CENTER);
         dashboardPanel.revalidate();
         dashboardPanel.repaint();
     }//GEN-LAST:event_roundedButtonManageSiswaActionPerformed
 
     private void roundedButtonDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundedButtonDashboardActionPerformed
+        DashboardPanel panel = new DashboardPanel();
+        currentPanel = panel;
         dashboardPanel.removeAll();
         dashboardPanel.setLayout(new java.awt.BorderLayout());
-        dashboardPanel.add(new DashboardPanel(), java.awt.BorderLayout.CENTER);
+        dashboardPanel.add(panel, java.awt.BorderLayout.CENTER);
         dashboardPanel.revalidate();
         dashboardPanel.repaint();
     }//GEN-LAST:event_roundedButtonDashboardActionPerformed
 
     private void roundedButtonSekolahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundedButtonSekolahActionPerformed
+        ManageSekolah panel = new ManageSekolah();
+        currentPanel = panel;
         dashboardPanel.removeAll();
         dashboardPanel.setLayout(new java.awt.BorderLayout());
-        dashboardPanel.add(new ManageSekolah(), java.awt.BorderLayout.CENTER);
+        dashboardPanel.add(panel, java.awt.BorderLayout.CENTER);
         dashboardPanel.revalidate();
         dashboardPanel.repaint();
     }//GEN-LAST:event_roundedButtonSekolahActionPerformed
 
     private void roundedButtonUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundedButtonUserActionPerformed
+        ManageUser panel = new ManageUser();
+        currentPanel = panel;
         dashboardPanel.removeAll();
         dashboardPanel.setLayout(new java.awt.BorderLayout());
-        dashboardPanel.add(new ManageUser(), java.awt.BorderLayout.CENTER);
+        dashboardPanel.add(panel, java.awt.BorderLayout.CENTER);
         dashboardPanel.revalidate();
         dashboardPanel.repaint();
     }//GEN-LAST:event_roundedButtonUserActionPerformed
@@ -233,17 +268,21 @@ public class Dashboard extends javax.swing.JFrame {
     }//GEN-LAST:event_roundedButtonLogoutActionPerformed
 
     private void roundedButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundedButton6ActionPerformed
-         dashboardPanel.removeAll();
+        LogAbsensi panel = new LogAbsensi();
+        currentPanel = panel;
+        dashboardPanel.removeAll();
         dashboardPanel.setLayout(new java.awt.BorderLayout());
-        dashboardPanel.add(new LogAbsensi(), java.awt.BorderLayout.CENTER);
+        dashboardPanel.add(panel, java.awt.BorderLayout.CENTER);
         dashboardPanel.revalidate();
         dashboardPanel.repaint();
     }//GEN-LAST:event_roundedButton6ActionPerformed
 
     private void roundedButtonSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundedButtonSettingsActionPerformed
+        settings panel = new settings();
+        currentPanel = panel;
         dashboardPanel.removeAll();
         dashboardPanel.setLayout(new java.awt.BorderLayout());
-        dashboardPanel.add(new settings(), java.awt.BorderLayout.CENTER);
+        dashboardPanel.add(panel, java.awt.BorderLayout.CENTER);
         dashboardPanel.revalidate();
         dashboardPanel.repaint();
     }//GEN-LAST:event_roundedButtonSettingsActionPerformed
@@ -262,16 +301,24 @@ public class Dashboard extends javax.swing.JFrame {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
+
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Dashboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Dashboard.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Dashboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Dashboard.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Dashboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Dashboard.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
+
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Dashboard.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Dashboard.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 

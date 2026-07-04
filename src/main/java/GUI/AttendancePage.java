@@ -4,6 +4,9 @@
  */
 package GUI;
 
+import com.pemkom.objects.services.I18nService;
+import javax.swing.SwingUtilities;
+
 /**
  *
  * @author LENOVO
@@ -14,6 +17,12 @@ public class AttendancePage extends javax.swing.JFrame {
 
     public AttendancePage() {
         initComponents();
+        jLabel2.setText(I18nService.get("ui.label.title"));
+        jLabel4.setText(I18nService.get("ui.label.tap"));
+        jLabel5.setText(I18nService.get("ui.label.fullname"));
+        jLabel6.setText(I18nService.get("ui.label.school"));
+        jLabel7.setText(I18nService.get("ui.label.status"));
+        roundedButton1.setText(I18nService.get("ui.btn.logout"));
         initClock();
         initRFID();
         setExtendedState(javax.swing.JFrame.MAXIMIZED_BOTH);
@@ -86,7 +95,7 @@ public class AttendancePage extends javax.swing.JFrame {
         if (murid != null) {
             lblNama.setText(murid.getNamaLengkap());
             lblSekolah.setText(murid.getSekolah());
-            lblStatus.setText("HADIR");
+            lblStatus.setText(I18nService.get("ui.label.present"));
 
             // Simpan log absensi ke MongoDB
             com.pemkom.objects.GenericDAO<com.pemkom.objects.LogAbsensi> logDAO
@@ -104,8 +113,19 @@ public class AttendancePage extends javax.swing.JFrame {
         } else {
             lblNama.setText("-");
             lblSekolah.setText("-");
-            lblStatus.setText("Kartu tidak dikenali!");
+            lblStatus.setText(I18nService.get("ui.label.unknown"));
         }
+    }
+
+    public void applyLanguage() {
+        SwingUtilities.invokeLater(() -> {
+            jLabel2.setText(I18nService.get("ui.label.title"));
+            jLabel4.setText(I18nService.get("ui.label.tap"));
+            jLabel5.setText(I18nService.get("ui.label.fullname"));
+            jLabel6.setText(I18nService.get("ui.label.school"));
+            jLabel7.setText(I18nService.get("ui.label.status"));
+            roundedButton1.setText(I18nService.get("ui.btn.logout"));
+        });
     }
 
 // Bersihkan saat halaman ditutup
@@ -157,6 +177,7 @@ public class AttendancePage extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel2.setText("SISTEM ABSENSI");
 
         lblJam.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
@@ -170,9 +191,9 @@ public class AttendancePage extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(86, 86, 86)
                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(331, 331, 331)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 404, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 248, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 928, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
                 .addComponent(lblJam, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(31, 31, 31))
         );
@@ -195,11 +216,13 @@ public class AttendancePage extends javax.swing.JFrame {
         jPanel2.setBackground(new java.awt.Color(51, 153, 255));
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel4.setText("SILAHKAN TAP KARTU RFID ANDA");
 
         txtUID.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         txtUID.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-card-100.png"))); // NOI18N
 
         jPanel3.setBackground(new java.awt.Color(102, 204, 255));
@@ -280,15 +303,14 @@ public class AttendancePage extends javax.swing.JFrame {
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(586, 586, 586)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jLabel4)
-                                .addGroup(jPanel2Layout.createSequentialGroup()
-                                    .addComponent(jLabel3)
-                                    .addGap(152, 152, 152)))
+                            .addComponent(jLabel4)
                             .addComponent(txtUID, javax.swing.GroupLayout.PREFERRED_SIZE, 407, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(42, 42, 42)
-                        .addComponent(roundedButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(roundedButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(718, 718, 718)
+                        .addComponent(jLabel3)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -298,9 +320,9 @@ public class AttendancePage extends javax.swing.JFrame {
                 .addComponent(jLabel3)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel4)
-                .addGap(18, 18, 18)
+                .addGap(30, 30, 30)
                 .addComponent(txtUID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(54, 54, 54)
+                .addGap(42, 42, 42)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 108, Short.MAX_VALUE)
                 .addComponent(roundedButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
