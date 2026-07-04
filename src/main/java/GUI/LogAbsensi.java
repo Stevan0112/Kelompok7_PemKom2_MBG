@@ -11,9 +11,10 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
+import com.pemkom.objects.services.I18nService;
 
 // Variable di dalam class
-public class LogAbsensi extends javax.swing.JPanel {
+public class LogAbsensi extends javax.swing.JPanel implements I18nService.I18nChangeListener {
 
     private LogAbsensiService service = new LogAbsensiService();
     private DefaultTableModel tableModel;
@@ -23,6 +24,17 @@ public class LogAbsensi extends javax.swing.JPanel {
         initTabel();
         initDropdownSekolah();
         loadData();
+        I18nService.registerListener(this);
+        onLanguageChanged();
+    }
+
+    @Override
+    public void onLanguageChanged() {
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            jLabel1.setText(I18nService.get("ui.log.title"));
+            this.revalidate();
+            this.repaint();
+        });
     }
 
     private void initTabel() {

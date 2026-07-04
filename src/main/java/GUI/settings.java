@@ -4,17 +4,42 @@
  */
 package GUI;
 
-/**
- *
- * @author LENOVO
- */
-public class settings extends javax.swing.JPanel {
+import com.pemkom.objects.services.I18nService;
+import java.util.Locale;
+import java.util.prefs.Preferences;
+import javax.swing.SwingUtilities;
 
-    /**
-     * Creates new form settings
-     */
+public class settings extends javax.swing.JPanel implements I18nService.I18nChangeListener {
+
+    public static Preferences prefs = Preferences.userNodeForPackage(settings.class);
+    public static String statusLang;
+
     public settings() {
+        // Load bahasa tersimpan SEBELUM initComponents
+        statusLang = prefs.get("LANGUAGE", "id");
+        I18nService.setLocale(new Locale(statusLang));
         initComponents();
+         jLabel1.setText(I18nService.get("ui.settings.title"));
+        jLabel2.setText(I18nService.get("ui.settings.language"));
+
+        // Set toggle button sesuai bahasa tersimpan
+        if ("en".equals(statusLang)) {
+            jToggleButton2.setSelected(true);
+        } else {
+            jToggleButton1.setSelected(true);
+        }
+
+        I18nService.registerListener(this);
+    }
+
+    @Override
+    public void onLanguageChanged() {
+        SwingUtilities.invokeLater(() -> {
+            jLabel1.setText(I18nService.get("ui.settings.title"));
+            jLabel2.setText(I18nService.get("ui.settings.language"));
+            this.revalidate();
+            this.repaint();
+        });
     }
 
     /**
@@ -110,11 +135,15 @@ public class settings extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jToggleButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton1ActionPerformed
-        // TODO add your handling code here:
+        statusLang = "id";
+        prefs.put("LANGUAGE", statusLang);
+        I18nService.setLocale(new Locale("id"));
     }//GEN-LAST:event_jToggleButton1ActionPerformed
 
     private void jToggleButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jToggleButton2ActionPerformed
-        // TODO add your handling code here:
+        statusLang = "en";
+        prefs.put("LANGUAGE", statusLang);
+        I18nService.setLocale(new Locale("en"));
     }//GEN-LAST:event_jToggleButton2ActionPerformed
 
 

@@ -4,17 +4,33 @@
  */
 package GUI;
 
+import com.pemkom.objects.services.I18nService;
+
 /**
  *
  * @author LENOVO
  */
-public class DashboardPanel extends javax.swing.JPanel {
+public class DashboardPanel extends javax.swing.JPanel implements I18nService.I18nChangeListener {
 
     /**
      * Creates new form DashboardPanel
      */
     public DashboardPanel() {
         initComponents();
+        I18nService.registerListener(this);
+        onLanguageChanged();
+    }
+
+    @Override
+    public void onLanguageChanged() {
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            jLabel1.setText(I18nService.get("ui.dashboard.header"));
+            jLabel2.setText(I18nService.get("ui.dashboard.sudahAmbil"));
+            jLabel3.setText(I18nService.get("ui.dashboard.belumAmbil"));
+            jLabel4.setText(I18nService.get("ui.dashboard.totalSiswa"));
+            this.revalidate();
+            this.repaint();
+        });
     }
 
     /**
