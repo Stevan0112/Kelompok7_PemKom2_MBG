@@ -4,30 +4,99 @@
  */
 package GUI;
 
+import com.pemkom.objects.GenericDAO;
+import com.pemkom.objects.Sekolah;
 import com.pemkom.objects.services.I18nService;
+import java.util.List;
 
-/**
- *
- * @author LENOVO
- */
 public class DashboardPanel extends javax.swing.JPanel implements I18nService.I18nChangeListener {
 
-    /**
-     * Creates new form DashboardPanel
-     */
+    private GenericDAO<Sekolah> sekolahDAO = new GenericDAO<>("Sekolah", Sekolah.class);
+    private boolean isInitializing = false;
+
     public DashboardPanel() {
         initComponents();
+        loadDropdownSekolah();
         I18nService.registerListener(this);
         onLanguageChanged();
+    }
+
+    private void loadDropdownSekolah() {
+        isInitializing = true;
+        jComboBox1.removeAllItems();
+        jComboBox1.addItem(I18nService.get("ui.dropdown.semua")); // default "Semua" / "All"
+        List<Sekolah> listSekolah = sekolahDAO.findAll();
+        for (Sekolah s : listSekolah) {
+            jComboBox1.addItem(s.getNamaSekolah());
+        }
+        jComboBox1.setSelectedIndex(0);
+        isInitializing = false;
+        loadStatistik(); // load data awal semua sekolah
+    }
+
+    private void loadStatistik() {
+        String selectedSekolah = (String) jComboBox1.getSelectedItem();
+        String semua = I18nService.get("ui.dropdown.semua");
+
+        // Ambil semua siswa
+        GenericDAO<com.pemkom.objects.Murid> muridDAO
+                = new GenericDAO<>("Murid", com.pemkom.objects.Murid.class);
+        List<com.pemkom.objects.Murid> semuaMurid;
+
+        if (selectedSekolah == null || selectedSekolah.equals(semua)
+                || selectedSekolah.equals("Semua") || selectedSekolah.equals("All")) {
+            semuaMurid = muridDAO.findAll();
+        } else {
+            semuaMurid = muridDAO.findMany(
+                    com.mongodb.client.model.Filters.eq("sekolah", selectedSekolah)
+            );
+        }
+
+        // Ambil semua log absensi hari ini
+        GenericDAO<com.pemkom.objects.LogAbsensi> logDAO
+                = new GenericDAO<>("Log Absensi", com.pemkom.objects.LogAbsensi.class);
+        List<com.pemkom.objects.LogAbsensi> semuaLog = logDAO.findAll();
+
+        // Hitung yang sudah absen (UID ada di log)
+        java.util.Set<String> sudahAbsen = new java.util.HashSet<>();
+        for (com.pemkom.objects.LogAbsensi log : semuaLog) {
+            sudahAbsen.add(log.getUidRfid());
+        }
+
+        int total = semuaMurid.size();
+        int sudah = 0;
+        for (com.pemkom.objects.Murid m : semuaMurid) {
+            if (sudahAbsen.contains(m.getUidRfid())) {
+                sudah++;
+            }
+        }
+        int belum = total - sudah;
+
+        // Tampilkan ke label di roundedPanel
+        // Tambahkan JLabel di dalam roundedPanel1, roundedPanel2, roundedPanel3
+        // via Design view lalu update di sini:
+        lblSudah.setText(String.valueOf(sudah));
+
+        lbltotal.setText(String.valueOf(total));
     }
 
     @Override
     public void onLanguageChanged() {
         javax.swing.SwingUtilities.invokeLater(() -> {
             jLabel1.setText(I18nService.get("ui.dashboard.header"));
-            jLabel2.setText(I18nService.get("ui.dashboard.sudahAmbil"));
-            jLabel3.setText(I18nService.get("ui.dashboard.belumAmbil"));
-            jLabel4.setText(I18nService.get("ui.dashboard.totalSiswa"));
+            lbl.setText(I18nService.get("ui.dashboard.sudahAmbil"));
+
+            lbl3.setText(I18nService.get("ui.dashboard.totalSiswa"));
+
+            // Update item pertama dropdown
+            isInitializing = true;
+            javax.swing.DefaultComboBoxModel<String> model
+                    = (javax.swing.DefaultComboBoxModel<String>) jComboBox1.getModel();
+            model.removeElementAt(0);
+            model.insertElementAt(I18nService.get("ui.dropdown.semua"), 0);
+            jComboBox1.setSelectedIndex(0);
+            isInitializing = false;
+
             this.revalidate();
             this.repaint();
         });
@@ -44,12 +113,13 @@ public class DashboardPanel extends javax.swing.JPanel implements I18nService.I1
 
         jLabel1 = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox<>();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        lbl3 = new javax.swing.JLabel();
+        lbl = new javax.swing.JLabel();
         roundedPanel1 = new GUI.RoundedPanel();
-        roundedPanel2 = new GUI.RoundedPanel();
-        jLabel3 = new javax.swing.JLabel();
-        roundedPanel3 = new GUI.RoundedPanel();
+        lblSudah = new javax.swing.JLabel();
+        lblTotal = new GUI.RoundedPanel();
+        lbltotal = new javax.swing.JLabel();
+        jDateChooser1 = new com.toedter.calendar.JDateChooser();
 
         setBackground(new java.awt.Color(255, 255, 255));
         setPreferredSize(new java.awt.Dimension(1360, 840));
@@ -72,95 +142,94 @@ public class DashboardPanel extends javax.swing.JPanel implements I18nService.I1
         add(jComboBox1);
         jComboBox1.setBounds(377, 133, 420, 64);
 
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel4.setText("Total Siswa");
-        add(jLabel4);
-        jLabel4.setBounds(880, 280, 218, 32);
+        lbl3.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lbl3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbl3.setText("Total Siswa");
+        add(lbl3);
+        lbl3.setBounds(690, 270, 218, 32);
 
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("Sudah Mengambil");
-        add(jLabel2);
-        jLabel2.setBounds(150, 281, 218, 32);
+        lbl.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
+        lbl.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbl.setText("Sudah Mengambil");
+        add(lbl);
+        lbl.setBounds(250, 280, 218, 32);
 
         roundedPanel1.setBackground(new java.awt.Color(255, 255, 255));
         roundedPanel1.setForeground(new java.awt.Color(255, 255, 255));
         roundedPanel1.setAutoscrolls(true);
         roundedPanel1.setBackgroundColor(new java.awt.Color(237, 238, 252));
 
+        lblSudah.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        lblSudah.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSudah.setText("0");
+
         javax.swing.GroupLayout roundedPanel1Layout = new javax.swing.GroupLayout(roundedPanel1);
         roundedPanel1.setLayout(roundedPanel1Layout);
         roundedPanel1Layout.setHorizontalGroup(
             roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 227, Short.MAX_VALUE)
+            .addGroup(roundedPanel1Layout.createSequentialGroup()
+                .addGap(97, 97, 97)
+                .addComponent(lblSudah)
+                .addContainerGap(108, Short.MAX_VALUE))
         );
         roundedPanel1Layout.setVerticalGroup(
             roundedPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 145, Short.MAX_VALUE)
+            .addGroup(roundedPanel1Layout.createSequentialGroup()
+                .addGap(42, 42, 42)
+                .addComponent(lblSudah)
+                .addContainerGap(55, Short.MAX_VALUE))
         );
 
         add(roundedPanel1);
-        roundedPanel1.setBounds(141, 331, 227, 145);
+        roundedPanel1.setBounds(240, 330, 226, 145);
 
-        roundedPanel2.setForeground(new java.awt.Color(237, 238, 252));
-        roundedPanel2.setAutoscrolls(true);
-        roundedPanel2.setBackgroundColor(new java.awt.Color(237, 238, 252));
-        roundedPanel2.setPreferredSize(new java.awt.Dimension(227, 145));
+        lblTotal.setForeground(new java.awt.Color(237, 238, 252));
+        lblTotal.setAutoscrolls(true);
+        lblTotal.setBackgroundColor(new java.awt.Color(237, 238, 252));
+        lblTotal.setPreferredSize(new java.awt.Dimension(227, 145));
 
-        javax.swing.GroupLayout roundedPanel2Layout = new javax.swing.GroupLayout(roundedPanel2);
-        roundedPanel2.setLayout(roundedPanel2Layout);
-        roundedPanel2Layout.setHorizontalGroup(
-            roundedPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 227, Short.MAX_VALUE)
+        lbltotal.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
+        lbltotal.setText("0");
+
+        javax.swing.GroupLayout lblTotalLayout = new javax.swing.GroupLayout(lblTotal);
+        lblTotal.setLayout(lblTotalLayout);
+        lblTotalLayout.setHorizontalGroup(
+            lblTotalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, lblTotalLayout.createSequentialGroup()
+                .addContainerGap(106, Short.MAX_VALUE)
+                .addComponent(lbltotal)
+                .addGap(88, 88, 88))
         );
-        roundedPanel2Layout.setVerticalGroup(
-            roundedPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 140, Short.MAX_VALUE)
-        );
-
-        add(roundedPanel2);
-        roundedPanel2.setBounds(512, 336, 227, 140);
-
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 0, 24)); // NOI18N
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("Belum Mengambil");
-        add(jLabel3);
-        jLabel3.setBounds(509, 281, 218, 32);
-
-        roundedPanel3.setForeground(new java.awt.Color(237, 238, 252));
-        roundedPanel3.setAutoscrolls(true);
-        roundedPanel3.setBackgroundColor(new java.awt.Color(237, 238, 252));
-        roundedPanel3.setPreferredSize(new java.awt.Dimension(227, 145));
-
-        javax.swing.GroupLayout roundedPanel3Layout = new javax.swing.GroupLayout(roundedPanel3);
-        roundedPanel3.setLayout(roundedPanel3Layout);
-        roundedPanel3Layout.setHorizontalGroup(
-            roundedPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 215, Short.MAX_VALUE)
-        );
-        roundedPanel3Layout.setVerticalGroup(
-            roundedPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 140, Short.MAX_VALUE)
+        lblTotalLayout.setVerticalGroup(
+            lblTotalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(lblTotalLayout.createSequentialGroup()
+                .addGap(41, 41, 41)
+                .addComponent(lbltotal)
+                .addContainerGap(56, Short.MAX_VALUE))
         );
 
-        add(roundedPanel3);
-        roundedPanel3.setBounds(890, 340, 215, 140);
+        add(lblTotal);
+        lblTotal.setBounds(700, 330, 215, 145);
+        add(jDateChooser1);
+        jDateChooser1.setBounds(950, 150, 120, 30);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
-        // TODO add your handling code here:
+        if (!isInitializing) {
+            loadStatistik();
+        }
     }//GEN-LAST:event_jComboBox1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> jComboBox1;
+    private com.toedter.calendar.JDateChooser jDateChooser1;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel lbl;
+    private javax.swing.JLabel lbl3;
+    private javax.swing.JLabel lblSudah;
+    private GUI.RoundedPanel lblTotal;
+    private javax.swing.JLabel lbltotal;
     private GUI.RoundedPanel roundedPanel1;
-    private GUI.RoundedPanel roundedPanel2;
-    private GUI.RoundedPanel roundedPanel3;
     // End of variables declaration//GEN-END:variables
 }
