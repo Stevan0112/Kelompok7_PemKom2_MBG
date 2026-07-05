@@ -1,10 +1,5 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package GUI;
 
-// Import tambahan di atas
 import com.pemkom.objects.services.LogAbsensiService;
 import com.pemkom.objects.LogAbsensiView;
 import java.time.LocalDate;
@@ -13,33 +8,77 @@ import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import com.pemkom.objects.services.I18nService;
 
-// Variable di dalam class
 public class LogAbsensi extends javax.swing.JPanel implements I18nService.I18nChangeListener {
 
     private LogAbsensiService service = new LogAbsensiService();
     private DefaultTableModel tableModel;
+    private boolean isInitializing = false;
 
     public LogAbsensi() {
+        isInitializing = true;
         initComponents();
         initTabel();
-        initDropdownSekolah();
+        loadDropdown(); // ← HANYA dipanggil di sini
         loadData();
+        isInitializing = false;
         I18nService.registerListener(this);
-        onLanguageChanged();
     }
 
     @Override
     public void onLanguageChanged() {
+        System.out.println("onLanguageChanged dipanggil: " + I18nService.getCurrentLocale());
         javax.swing.SwingUtilities.invokeLater(() -> {
+            // Update judul
             jLabel1.setText(I18nService.get("ui.log.title"));
+
+            // Update header kolom
+            tableModel.setColumnIdentifiers(new Object[]{
+                I18nService.get("ui.table.nama"),
+                I18nService.get("ui.table.uid"),
+                I18nService.get("ui.table.sekolah"),
+                I18nService.get("ui.table.hari"),
+                I18nService.get("ui.table.jam"),
+                I18nService.get("ui.table.status")
+            });
+
+            // Update HANYA item pertama dropdown — JANGAN rebuild
+            isInitializing = true;
+            javax.swing.DefaultComboBoxModel<String> model =
+                (javax.swing.DefaultComboBoxModel<String>) cbSekolah.getModel();
+            model.removeElementAt(0);
+            model.insertElementAt(I18nService.get("ui.dropdown.semua"), 0);
+            cbSekolah.setSelectedIndex(0);
+            isInitializing = false;
+
+            loadData();
             this.revalidate();
             this.repaint();
         });
     }
 
+    // SATU method untuk init dropdown — hanya dipanggil dari constructor
+    private void loadDropdown() {
+        isInitializing = true;
+        javax.swing.DefaultComboBoxModel<String> model = new javax.swing.DefaultComboBoxModel<>();
+        model.addElement(I18nService.get("ui.dropdown.semua"));
+        for (String s : service.getAllSekolah()) {
+            model.addElement(s);
+        }
+        cbSekolah.setModel(model);
+        cbSekolah.setSelectedIndex(0);
+        isInitializing = false;
+    }
+
     private void initTabel() {
         tableModel = new DefaultTableModel(
-                new String[]{"Nama", "UID RFID", "Sekolah", "Hari", "Jam", "Status"}, 0
+                new Object[]{
+                    I18nService.get("ui.table.nama"),
+                    I18nService.get("ui.table.uid"),
+                    I18nService.get("ui.table.sekolah"),
+                    I18nService.get("ui.table.hari"),
+                    I18nService.get("ui.table.jam"),
+                    I18nService.get("ui.table.status")
+                }, 0
         ) {
             @Override
             public boolean isCellEditable(int row, int col) {
@@ -50,19 +89,18 @@ public class LogAbsensi extends javax.swing.JPanel implements I18nService.I18nCh
         tblLog.setRowHeight(28);
     }
 
-    private void initDropdownSekolah() {
-        cbSekolah.removeAllItems();
-        for (String s : service.getAllSekolah()) {
-            cbSekolah.addItem(s);
-        }
-    }
-
     private void loadData() {
-        // Ambil nilai filter
-        String sekolah = (String) cbSekolah.getSelectedItem();
-        String nama = txtCariNama.getText().trim();
+        String sekolahDipilih = (String) cbSekolah.getSelectedItem();
+        String sekolah = null;
+        String semua = I18nService.get("ui.dropdown.semua");
+        if (sekolahDipilih != null
+                && !sekolahDipilih.equals(semua)
+                && !sekolahDipilih.equals("Semua")
+                && !sekolahDipilih.equals("All")) {
+            sekolah = sekolahDipilih;
+        }
 
-        // Ambil tanggal dari JDateChooser, null kalau belum dipilih
+        String nama = txtCariNama.getText().trim();
         LocalDate tanggal = null;
         if (dateChooser.getDate() != null) {
             tanggal = dateChooser.getDate()
@@ -71,28 +109,39 @@ public class LogAbsensi extends javax.swing.JPanel implements I18nService.I18nCh
                     .toLocalDate();
         }
 
-        // Query + filter
         List<LogAbsensiView> data = service.filterLog(sekolah, nama, tanggal);
-
-        // Isi tabel
         tableModel.setRowCount(0);
         for (LogAbsensiView item : data) {
+            String status = item.getStatus();
+            String statusTampil = "Hadir".equalsIgnoreCase(status)
+                    ? I18nService.get("ui.table.hadir") : status;
+            String hariTampil = mapHari(item.getHari());
+
             tableModel.addRow(new Object[]{
                 item.getNamaLengkap(),
                 item.getUidRfid(),
                 item.getSekolah(),
-                item.getHari(),
+                hariTampil,
                 item.getJam(),
-                item.getStatus()
+                statusTampil
             });
         }
     }
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
+    private String mapHari(String hari) {
+        if (hari == null) return "";
+        switch (hari) {
+            case "Senin":   return I18nService.get("ui.hari.senin");
+            case "Selasa":  return I18nService.get("ui.hari.selasa");
+            case "Rabu":    return I18nService.get("ui.hari.rabu");
+            case "Kamis":   return I18nService.get("ui.hari.kamis");
+            case "Jumat":   return I18nService.get("ui.hari.jumat");
+            case "Sabtu":   return I18nService.get("ui.hari.sabtu");
+            case "Minggu":  return I18nService.get("ui.hari.minggu");
+            default:        return hari;
+        }
+    }
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -205,7 +254,9 @@ public class LogAbsensi extends javax.swing.JPanel implements I18nService.I18nCh
     }//GEN-LAST:event_txtCariNamaKeyReleased
 
     private void cbSekolahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbSekolahActionPerformed
-        loadData();
+        if (!isInitializing) {
+            loadData();
+        }
     }//GEN-LAST:event_cbSekolahActionPerformed
 
     private void dateChooserPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_dateChooserPropertyChange
