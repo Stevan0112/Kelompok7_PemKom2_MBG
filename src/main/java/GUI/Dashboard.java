@@ -10,6 +10,12 @@ import javax.swing.SwingUtilities;
 public class Dashboard extends javax.swing.JFrame implements I18nService.I18nChangeListener {
 
     private javax.swing.JPanel currentPanel;
+    private LogAbsensi logAbsensiPanel;
+    private ManageSiswa manageSiswaPanel;
+    private ManageSekolah manageSekolahPanel;
+    private ManageUser manageUserPanel;
+    private settings settingsPanel;
+    private DashboardPanel dashboardContentPanel;
 
     public Dashboard() {
         initComponents();
@@ -214,41 +220,49 @@ public class Dashboard extends javax.swing.JFrame implements I18nService.I18nCha
     }// </editor-fold>//GEN-END:initComponents
 
     private void roundedButtonManageSiswaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundedButtonManageSiswaActionPerformed
-        ManageSiswa panel = new ManageSiswa();
-        currentPanel = panel;
+        if (manageSiswaPanel == null) {
+            manageSiswaPanel = new ManageSiswa();
+        }
+        currentPanel = manageSiswaPanel;
         dashboardPanel.removeAll();
         dashboardPanel.setLayout(new java.awt.BorderLayout());
-        dashboardPanel.add(panel, java.awt.BorderLayout.CENTER);
+        dashboardPanel.add(manageSiswaPanel, java.awt.BorderLayout.CENTER);
         dashboardPanel.revalidate();
         dashboardPanel.repaint();
     }//GEN-LAST:event_roundedButtonManageSiswaActionPerformed
 
     private void roundedButtonDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundedButtonDashboardActionPerformed
-        DashboardPanel panel = new DashboardPanel();
-        currentPanel = panel;
+        if (dashboardContentPanel == null) {
+            dashboardContentPanel = new DashboardPanel();
+        }
+        currentPanel = dashboardContentPanel;
         dashboardPanel.removeAll();
         dashboardPanel.setLayout(new java.awt.BorderLayout());
-        dashboardPanel.add(panel, java.awt.BorderLayout.CENTER);
+        dashboardPanel.add(dashboardContentPanel, java.awt.BorderLayout.CENTER);
         dashboardPanel.revalidate();
         dashboardPanel.repaint();
     }//GEN-LAST:event_roundedButtonDashboardActionPerformed
 
     private void roundedButtonSekolahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundedButtonSekolahActionPerformed
-        ManageSekolah panel = new ManageSekolah();
-        currentPanel = panel;
+        if (manageSekolahPanel == null) {
+            manageSekolahPanel = new ManageSekolah();
+        }
+        currentPanel = manageSekolahPanel;
         dashboardPanel.removeAll();
         dashboardPanel.setLayout(new java.awt.BorderLayout());
-        dashboardPanel.add(panel, java.awt.BorderLayout.CENTER);
+        dashboardPanel.add(manageSekolahPanel, java.awt.BorderLayout.CENTER);
         dashboardPanel.revalidate();
         dashboardPanel.repaint();
     }//GEN-LAST:event_roundedButtonSekolahActionPerformed
 
     private void roundedButtonUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundedButtonUserActionPerformed
-        ManageUser panel = new ManageUser();
-        currentPanel = panel;
+        if (manageUserPanel == null) {
+            manageUserPanel = new ManageUser();
+        }
+        currentPanel = manageUserPanel;
         dashboardPanel.removeAll();
         dashboardPanel.setLayout(new java.awt.BorderLayout());
-        dashboardPanel.add(panel, java.awt.BorderLayout.CENTER);
+        dashboardPanel.add(manageUserPanel, java.awt.BorderLayout.CENTER);
         dashboardPanel.revalidate();
         dashboardPanel.repaint();
     }//GEN-LAST:event_roundedButtonUserActionPerformed
@@ -268,21 +282,25 @@ public class Dashboard extends javax.swing.JFrame implements I18nService.I18nCha
     }//GEN-LAST:event_roundedButtonLogoutActionPerformed
 
     private void roundedButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundedButton6ActionPerformed
-        LogAbsensi panel = new LogAbsensi();
-        currentPanel = panel;
+        if (logAbsensiPanel == null) {
+            logAbsensiPanel = new LogAbsensi();
+        }
+        currentPanel = logAbsensiPanel;
         dashboardPanel.removeAll();
         dashboardPanel.setLayout(new java.awt.BorderLayout());
-        dashboardPanel.add(panel, java.awt.BorderLayout.CENTER);
+        dashboardPanel.add(logAbsensiPanel, java.awt.BorderLayout.CENTER);
         dashboardPanel.revalidate();
         dashboardPanel.repaint();
     }//GEN-LAST:event_roundedButton6ActionPerformed
 
     private void roundedButtonSettingsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_roundedButtonSettingsActionPerformed
-        settings panel = new settings();
-        currentPanel = panel;
+        if (settingsPanel == null) {
+            settingsPanel = new settings();
+        }
+        currentPanel = settingsPanel;
         dashboardPanel.removeAll();
         dashboardPanel.setLayout(new java.awt.BorderLayout());
-        dashboardPanel.add(panel, java.awt.BorderLayout.CENTER);
+        dashboardPanel.add(settingsPanel, java.awt.BorderLayout.CENTER);
         dashboardPanel.revalidate();
         dashboardPanel.repaint();
     }//GEN-LAST:event_roundedButtonSettingsActionPerformed

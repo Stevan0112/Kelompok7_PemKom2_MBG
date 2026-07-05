@@ -18,20 +18,19 @@ public class LogAbsensi extends javax.swing.JPanel implements I18nService.I18nCh
         isInitializing = true;
         initComponents();
         initTabel();
-        loadDropdown(); // ← HANYA dipanggil di sini
-        loadData();
+        // HAPUS loadDropdown() dari sini
         isInitializing = false;
         I18nService.registerListener(this);
+        // Panggil manual sekali untuk init awal
+        onLanguageChanged();
     }
 
     @Override
     public void onLanguageChanged() {
         System.out.println("onLanguageChanged dipanggil: " + I18nService.getCurrentLocale());
         javax.swing.SwingUtilities.invokeLater(() -> {
-            // Update judul
             jLabel1.setText(I18nService.get("ui.log.title"));
 
-            // Update header kolom
             tableModel.setColumnIdentifiers(new Object[]{
                 I18nService.get("ui.table.nama"),
                 I18nService.get("ui.table.uid"),
@@ -41,12 +40,13 @@ public class LogAbsensi extends javax.swing.JPanel implements I18nService.I18nCh
                 I18nService.get("ui.table.status")
             });
 
-            // Update HANYA item pertama dropdown — JANGAN rebuild
             isInitializing = true;
-            javax.swing.DefaultComboBoxModel<String> model =
-                (javax.swing.DefaultComboBoxModel<String>) cbSekolah.getModel();
-            model.removeElementAt(0);
-            model.insertElementAt(I18nService.get("ui.dropdown.semua"), 0);
+            javax.swing.DefaultComboBoxModel<String> newModel = new javax.swing.DefaultComboBoxModel<>();
+            newModel.addElement(I18nService.get("ui.dropdown.semua"));
+            for (String s : service.getAllSekolah()) {
+                newModel.addElement(s);
+            }
+            cbSekolah.setModel(newModel);
             cbSekolah.setSelectedIndex(0);
             isInitializing = false;
 
@@ -129,16 +129,26 @@ public class LogAbsensi extends javax.swing.JPanel implements I18nService.I18nCh
     }
 
     private String mapHari(String hari) {
-        if (hari == null) return "";
+        if (hari == null) {
+            return "";
+        }
         switch (hari) {
-            case "Senin":   return I18nService.get("ui.hari.senin");
-            case "Selasa":  return I18nService.get("ui.hari.selasa");
-            case "Rabu":    return I18nService.get("ui.hari.rabu");
-            case "Kamis":   return I18nService.get("ui.hari.kamis");
-            case "Jumat":   return I18nService.get("ui.hari.jumat");
-            case "Sabtu":   return I18nService.get("ui.hari.sabtu");
-            case "Minggu":  return I18nService.get("ui.hari.minggu");
-            default:        return hari;
+            case "Senin":
+                return I18nService.get("ui.hari.senin");
+            case "Selasa":
+                return I18nService.get("ui.hari.selasa");
+            case "Rabu":
+                return I18nService.get("ui.hari.rabu");
+            case "Kamis":
+                return I18nService.get("ui.hari.kamis");
+            case "Jumat":
+                return I18nService.get("ui.hari.jumat");
+            case "Sabtu":
+                return I18nService.get("ui.hari.sabtu");
+            case "Minggu":
+                return I18nService.get("ui.hari.minggu");
+            default:
+                return hari;
         }
     }
 
