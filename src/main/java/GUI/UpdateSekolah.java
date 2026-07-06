@@ -4,11 +4,9 @@
  */
 package GUI;
 
-/**
- *
- * @author LENOVO
- */
-public class UpdateSekolah extends javax.swing.JDialog {
+import com.pemkom.objects.services.I18nService;
+
+public class UpdateSekolah extends javax.swing.JDialog implements I18nService.I18nChangeListener {
 
     private String sekolahId;
 
@@ -16,10 +14,27 @@ public class UpdateSekolah extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(parent);
-
         this.sekolahId = idSekolah;
         nama.setText(namaSekolah);
         Alamat.setText(alamatSekolah);
+        I18nService.registerListener(this);
+        onLanguageChanged();
+    }
+
+    @Override
+    public void onLanguageChanged() {
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            jLabel1.setText(I18nService.get("ui.label.namaSekolah"));
+            jLabel2.setText(I18nService.get("ui.label.alamat"));
+            roundedButtonCancel.setText(I18nService.get("ui.btn.cancel"));
+            roundedButtonOK.setText(I18nService.get("ui.btn.ok"));
+        });
+    }
+
+    @Override
+    public void dispose() {
+        I18nService.unregisterListener(this);
+        super.dispose();
     }
 
     /**
@@ -162,7 +177,7 @@ public class UpdateSekolah extends javax.swing.JDialog {
         String alamatSekolah = Alamat.getText();
 
         if (namaSekolah.isEmpty() || alamatSekolah.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Semua field harus diisi!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+           javax.swing.JOptionPane.showMessageDialog(this, I18nService.get("ui.msg.fieldKosong"), I18nService.get("ui.msg.error"), javax.swing.JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -182,7 +197,7 @@ public class UpdateSekolah extends javax.swing.JDialog {
                 sekolahLama
         );
 
-        javax.swing.JOptionPane.showMessageDialog(this, "Data berhasil diupdate!");
+        javax.swing.JOptionPane.showMessageDialog(this, I18nService.get("ui.msg.berhasilSimpan"));
         dispose();
     }//GEN-LAST:event_roundedButtonOKActionPerformed
 

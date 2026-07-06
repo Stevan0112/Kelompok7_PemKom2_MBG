@@ -181,7 +181,8 @@ private void loadUser() {
         roundedButtonAdd2 = new GUI.RoundedButton();
         search = new javax.swing.JTextField();
 
-        setBackground(new java.awt.Color(255, 255, 255));
+        setBackground(new java.awt.Color(119, 183, 226));
+        setForeground(new java.awt.Color(255, 255, 255));
         setLayout(null);
 
         jScrollPane1.setViewportView(panelKonten);
@@ -190,6 +191,7 @@ private void loadUser() {
         jScrollPane1.setBounds(0, 130, 1380, 670);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 40)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Manage User");
         add(jLabel1);

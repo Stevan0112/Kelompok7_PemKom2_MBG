@@ -6,16 +6,12 @@ package GUI;
 
 import com.pemkom.objects.services.I18nService;
 
-/**
- *
- * @author LENOVO
- */
 public class ManageSiswa extends javax.swing.JPanel implements I18nService.I18nChangeListener {
 
-    /**
-     * Creates new form ManageSiswa
-     */
+    private boolean isInitializing = false;
+
     public ManageSiswa() {
+        isInitializing = true;
         initComponents();
         loadSiswa();
         loadComboSekolah();
@@ -31,10 +27,9 @@ public class ManageSiswa extends javax.swing.JPanel implements I18nService.I18nC
                 }
             }
         });
-        Sekolah.addActionListener(e -> searchSiswa());
         javax.swing.SwingUtilities.invokeLater(() -> loadSiswa());
-        I18nService.registerListener(this); // ← tambah ini
-        onLanguageChanged();                // ← tambah ini
+        isInitializing = false;
+        I18nService.registerListener(this);
     }
 
     @Override
@@ -42,6 +37,18 @@ public class ManageSiswa extends javax.swing.JPanel implements I18nService.I18nC
         javax.swing.SwingUtilities.invokeLater(() -> {
             jLabel1.setText(I18nService.get("ui.manage.siswa.title"));
             roundedButtonAdd2.setText(I18nService.get("ui.btn.add"));
+
+            // Update item pertama dropdown saja
+            isInitializing = true;
+            javax.swing.DefaultComboBoxModel<String> model
+                    = (javax.swing.DefaultComboBoxModel<String>) Sekolah.getModel();
+            if (model.getSize() > 0) {
+                model.removeElementAt(0);
+                model.insertElementAt(I18nService.get("ui.dropdown.semua"), 0);
+                Sekolah.setSelectedIndex(0);
+            }
+            isInitializing = false;
+
             this.revalidate();
             this.repaint();
         });
@@ -62,7 +69,6 @@ public class ManageSiswa extends javax.swing.JPanel implements I18nService.I18nC
             String nama = doc.getString("namaLengkap");
             String uid = doc.getString("uidRfid");
             String sekolah = doc.getString("sekolah");
-
             gridPanel.add(buatCard(objectId, nama, uid, sekolah));
         }
 
@@ -73,13 +79,15 @@ public class ManageSiswa extends javax.swing.JPanel implements I18nService.I18nC
     }
 
     private void loadComboSekolah() {
+        isInitializing = true;
+        Sekolah.removeAllItems();
+        Sekolah.addItem(I18nService.get("ui.dropdown.semua"));
         com.pemkom.objects.GenericDAO<com.pemkom.objects.Sekolah> sekolahDAO
                 = new com.pemkom.objects.GenericDAO<>("Sekolah", com.pemkom.objects.Sekolah.class);
-
-        Sekolah.addItem("Semua");
         for (com.pemkom.objects.Sekolah s : sekolahDAO.findAll()) {
             Sekolah.addItem(s.getNamaSekolah());
         }
+        isInitializing = false;
     }
 
     private void searchSiswa() {
@@ -93,11 +101,16 @@ public class ManageSiswa extends javax.swing.JPanel implements I18nService.I18nC
         com.mongodb.client.MongoCollection<org.bson.Document> col = db.getCollection("Murid");
 
         String keyword = search.getText().toLowerCase();
-        String sekolahFilter = Sekolah.getSelectedItem().toString();
+        String sekolahFilter = Sekolah.getSelectedItem() != null
+                ? Sekolah.getSelectedItem().toString() : "";
+        String semua = I18nService.get("ui.dropdown.semua");
 
         org.bson.conversions.Bson filter = new org.bson.Document();
 
-        if (!sekolahFilter.equals("Semua")) {
+        if (!sekolahFilter.equals(semua)
+                && !sekolahFilter.equals("Semua")
+                && !sekolahFilter.equals("All")
+                && !sekolahFilter.isEmpty()) {
             filter = com.mongodb.client.model.Filters.eq("sekolah", sekolahFilter);
         }
 
@@ -208,7 +221,7 @@ public class ManageSiswa extends javax.swing.JPanel implements I18nService.I18nC
         roundedButtonAdd2 = new GUI.RoundedButton();
         search = new javax.swing.JTextField();
 
-        setBackground(new java.awt.Color(255, 255, 255));
+        setBackground(new java.awt.Color(119, 183, 226));
         setLayout(null);
 
         jScrollPane1.setViewportView(panelKonten);
@@ -225,6 +238,7 @@ public class ManageSiswa extends javax.swing.JPanel implements I18nService.I18nC
         Sekolah.setBounds(1150, 50, 140, 40);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 40)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("Manage Siswa");
         add(jLabel1);
@@ -272,7 +286,9 @@ public class ManageSiswa extends javax.swing.JPanel implements I18nService.I18nC
     }//GEN-LAST:event_roundedButtonAdd2ActionPerformed
 
     private void SekolahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SekolahActionPerformed
-        // TODO add your handling code here:
+        if (!isInitializing) {
+            searchSiswa();
+        }
     }//GEN-LAST:event_SekolahActionPerformed
 
 

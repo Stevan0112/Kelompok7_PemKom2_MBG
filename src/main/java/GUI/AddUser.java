@@ -4,16 +4,16 @@
  */
 package GUI;
 
-/**
- *
- * @author LENOVO
- */
-public class AddUser extends javax.swing.JDialog {
+import com.pemkom.objects.services.I18nService;
+
+public class AddUser extends javax.swing.JDialog implements I18nService.I18nChangeListener {
 
     public AddUser(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(parent);
+        I18nService.registerListener(this);
+        onLanguageChanged();
     }
 
     private String generateIdUser() {
@@ -34,6 +34,23 @@ public class AddUser extends javax.swing.JDialog {
             }
         }
         return String.format("U%03d", maxId + 1);
+    }
+
+    @Override
+    public void onLanguageChanged() {
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            jLabel1.setText(I18nService.get("ui.label.username"));
+            jLabel2.setText(I18nService.get("ui.label.role"));
+            jLabel3.setText(I18nService.get("ui.label.password"));
+            roundedButtonCancel.setText(I18nService.get("ui.btn.cancel"));
+            roundedButtonOK.setText(I18nService.get("ui.btn.ok"));
+        });
+    }
+
+    @Override
+    public void dispose() {
+        I18nService.unregisterListener(this);
+        super.dispose();
     }
 
     /**
@@ -180,8 +197,7 @@ public class AddUser extends javax.swing.JDialog {
         String roleVal = Role.getSelectedItem().toString();
 
         if (usernameVal.isEmpty() || passwordVal.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Semua field harus diisi!",
-                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            javax.swing.JOptionPane.showMessageDialog(this, I18nService.get("ui.msg.fieldKosong"), I18nService.get("ui.msg.error"), javax.swing.JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -198,7 +214,7 @@ public class AddUser extends javax.swing.JDialog {
         );
         userDAO.save(user);
 
-        javax.swing.JOptionPane.showMessageDialog(this, "User berhasil ditambahkan!");
+        javax.swing.JOptionPane.showMessageDialog(this, I18nService.get("ui.msg.berhasilSimpan"));
         dispose();
     }//GEN-LAST:event_roundedButtonOKActionPerformed
 
