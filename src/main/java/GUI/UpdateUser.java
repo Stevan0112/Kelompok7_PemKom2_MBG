@@ -4,11 +4,9 @@
  */
 package GUI;
 
-/**
- *
- * @author LENOVO
- */
-public class UpdateUser extends javax.swing.JDialog {
+import com.pemkom.objects.services.I18nService;
+
+public class UpdateUser extends javax.swing.JDialog implements I18nService.I18nChangeListener {
 
     private String userId;
 
@@ -16,12 +14,10 @@ public class UpdateUser extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(parent);
-
         this.userId = idUser;
         Username.setText(usernameVal);
         Role.setSelectedItem(roleVal);
 
-        // Ambil password lama dari MongoDB
         com.pemkom.objects.GenericDAO<com.pemkom.objects.User> userDAO
                 = new com.pemkom.objects.GenericDAO<>("User", com.pemkom.objects.User.class);
         com.pemkom.objects.User userLama = userDAO.findOne(
@@ -30,6 +26,26 @@ public class UpdateUser extends javax.swing.JDialog {
         if (userLama != null) {
             Password.setText(userLama.getPassword());
         }
+
+        I18nService.registerListener(this);
+        onLanguageChanged();
+    }
+
+    @Override
+    public void onLanguageChanged() {
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            jLabel1.setText(I18nService.get("ui.label.username"));
+            jLabel2.setText(I18nService.get("ui.label.role"));
+            jLabel3.setText(I18nService.get("ui.label.password"));
+            roundedButtonCancel.setText(I18nService.get("ui.btn.cancel"));
+            roundedButtonOK.setText(I18nService.get("ui.btn.ok"));
+        });
+    }
+
+    @Override
+    public void dispose() {
+        I18nService.unregisterListener(this);
+        super.dispose();
     }
 
     /**
@@ -176,8 +192,7 @@ public class UpdateUser extends javax.swing.JDialog {
         String roleVal = Role.getSelectedItem().toString();
 
         if (usernameVal.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Username harus diisi!",
-                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            javax.swing.JOptionPane.showMessageDialog(this, I18nService.get("ui.msg.fieldKosong"), I18nService.get("ui.msg.error"), javax.swing.JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -205,7 +220,7 @@ public class UpdateUser extends javax.swing.JDialog {
                 userLama
         );
 
-        javax.swing.JOptionPane.showMessageDialog(this, "User berhasil diupdate!");
+        javax.swing.JOptionPane.showMessageDialog(this, I18nService.get("ui.msg.berhasilSimpan"));
         dispose();
 
     }//GEN-LAST:event_roundedButtonOKActionPerformed

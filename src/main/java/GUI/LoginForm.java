@@ -4,18 +4,31 @@
  */
 package GUI;
 
-/**
- *
- * @author LENOVO
- */
-public class LoginForm extends javax.swing.JFrame {
+import com.pemkom.objects.services.I18nService;
 
-    /**
-     * Creates new form LoginForm
-     */
+public class LoginForm extends javax.swing.JFrame implements I18nService.I18nChangeListener {
+
     public LoginForm() {
         initComponents();
         setLocationRelativeTo(null);
+        I18nService.registerListener(this);
+        onLanguageChanged();
+    }
+
+    @Override
+    public void onLanguageChanged() {
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            jLabel2.setText(I18nService.get("ui.login.title"));
+            jLabel3.setText(I18nService.get("ui.login.username"));
+            jLabel4.setText(I18nService.get("ui.login.password"));
+            jButton1.setText(I18nService.get("ui.login.btn"));
+        });
+    }
+
+    @Override
+    public void dispose() {
+        I18nService.unregisterListener(this);
+        super.dispose();
     }
 
     /**

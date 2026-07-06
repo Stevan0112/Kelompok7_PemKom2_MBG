@@ -1,17 +1,18 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
 package GUI;
 
 import com.pemkom.objects.GenericDAO;
 import com.pemkom.objects.Sekolah;
+import com.pemkom.objects.LogAbsensiView;
 import com.pemkom.objects.services.I18nService;
+import com.pemkom.objects.services.LogAbsensiService;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 public class DashboardPanel extends javax.swing.JPanel implements I18nService.I18nChangeListener {
 
     private GenericDAO<Sekolah> sekolahDAO = new GenericDAO<>("Sekolah", Sekolah.class);
+    private LogAbsensiService logAbsensiService = new LogAbsensiService();
     private boolean isInitializing = false;
 
     public DashboardPanel() {
@@ -19,6 +20,14 @@ public class DashboardPanel extends javax.swing.JPanel implements I18nService.I1
         loadDropdownSekolah();
         I18nService.registerListener(this);
         onLanguageChanged();
+
+        // Default: tampilkan data hari ini
+        jDateChooser1.setDate(new java.util.Date());
+        jDateChooser1.addPropertyChangeListener(evt -> {
+            if ("date".equals(evt.getPropertyName()) && !isInitializing) {
+                loadStatistik();
+            }
+        });
     }
 
     private void loadDropdownSekolah() {
@@ -38,45 +47,50 @@ public class DashboardPanel extends javax.swing.JPanel implements I18nService.I1
         String selectedSekolah = (String) jComboBox1.getSelectedItem();
         String semua = I18nService.get("ui.dropdown.semua");
 
-        // Ambil semua siswa
+        boolean isSemuaSekolah = selectedSekolah == null || selectedSekolah.equals(semua)
+                || selectedSekolah.equals("Semua") || selectedSekolah.equals("All");
+        String sekolahFilter = isSemuaSekolah ? null : selectedSekolah;
+
+        // Ambil semua siswa (total siswa di sekolah terpilih, tidak tergantung tanggal)
         GenericDAO<com.pemkom.objects.Murid> muridDAO
                 = new GenericDAO<>("Murid", com.pemkom.objects.Murid.class);
         List<com.pemkom.objects.Murid> semuaMurid;
 
-        if (selectedSekolah == null || selectedSekolah.equals(semua)
-                || selectedSekolah.equals("Semua") || selectedSekolah.equals("All")) {
+        if (isSemuaSekolah) {
             semuaMurid = muridDAO.findAll();
         } else {
             semuaMurid = muridDAO.findMany(
                     com.mongodb.client.model.Filters.eq("sekolah", selectedSekolah)
             );
         }
+        int total = semuaMurid.size();
 
-        // Ambil semua log absensi hari ini
-        GenericDAO<com.pemkom.objects.LogAbsensi> logDAO
-                = new GenericDAO<>("Log Absensi", com.pemkom.objects.LogAbsensi.class);
-        List<com.pemkom.objects.LogAbsensi> semuaLog = logDAO.findAll();
-
-        // Hitung yang sudah absen (UID ada di log)
-        java.util.Set<String> sudahAbsen = new java.util.HashSet<>();
-        for (com.pemkom.objects.LogAbsensi log : semuaLog) {
-            sudahAbsen.add(log.getUidRfid());
+        // Tanggal yang dipilih di JDateChooser (default: hari ini)
+        LocalDate tanggalDipilih;
+        if (jDateChooser1.getDate() != null) {
+            tanggalDipilih = jDateChooser1.getDate()
+                    .toInstant()
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+        } else {
+            tanggalDipilih = LocalDate.now();
         }
 
-        int total = semuaMurid.size();
-        int sudah = 0;
-        for (com.pemkom.objects.Murid m : semuaMurid) {
-            if (sudahAbsen.contains(m.getUidRfid())) {
-                sudah++;
+        // Ambil log absensi pada tanggal terpilih & sekolah terpilih
+        List<LogAbsensiView> logTanggalIni
+                = logAbsensiService.filterLog(sekolahFilter, null, tanggalDipilih);
+
+        // Hitung UID unik yang berstatus Hadir pada tanggal itu
+        java.util.Set<String> sudahAbsen = new java.util.HashSet<>();
+        for (LogAbsensiView log : logTanggalIni) {
+            if ("Hadir".equalsIgnoreCase(log.getStatus())) {
+                sudahAbsen.add(log.getUidRfid());
             }
         }
-        int belum = total - sudah;
+        int sudah = sudahAbsen.size();
 
         // Tampilkan ke label di roundedPanel
-        // Tambahkan JLabel di dalam roundedPanel1, roundedPanel2, roundedPanel3
-        // via Design view lalu update di sini:
         lblSudah.setText(String.valueOf(sudah));
-
         lbltotal.setText(String.valueOf(total));
     }
 

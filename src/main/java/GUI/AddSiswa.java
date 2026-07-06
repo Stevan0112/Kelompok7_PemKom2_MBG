@@ -4,21 +4,18 @@
  */
 package GUI;
 
-/**
- *
- * @author LENOVO
- */
-public class AddSiswa extends javax.swing.JDialog {
+import com.pemkom.objects.services.I18nService;
+
+public class AddSiswa extends javax.swing.JDialog implements I18nService.I18nChangeListener {
 
     public AddSiswa(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(parent);
         loadSekolah();
-
-        // Mulai baca RFID otomatis
         mulaiScanRFID();
-
+        I18nService.registerListener(this);
+        onLanguageChanged();
     }
 
     private void loadSekolah() {
@@ -71,7 +68,18 @@ public class AddSiswa extends javax.swing.JDialog {
     }
 
     @Override
+    public void onLanguageChanged() {
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            jLabel1.setText(I18nService.get("ui.label.nama"));
+            jLabel2.setText(I18nService.get("ui.label.uid"));
+            roundedButtonCancel.setText(I18nService.get("ui.btn.cancel"));
+            roundedButtonOK.setText(I18nService.get("ui.btn.ok"));
+        });
+    }
+
+    @Override
     public void dispose() {
+        I18nService.unregisterListener(this);
         if (rfidPort != null && rfidPort.isOpen()) {
             rfidPort.closePort();
         }
@@ -229,7 +237,7 @@ public class AddSiswa extends javax.swing.JDialog {
         String namaSekolah = sekolah.getSelectedItem().toString();
 
         if (namaLengkap.isEmpty() || uidRfid.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Semua field harus diisi!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+           javax.swing.JOptionPane.showMessageDialog(this, I18nService.get("ui.msg.fieldKosong"), I18nService.get("ui.msg.error"), javax.swing.JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -239,7 +247,7 @@ public class AddSiswa extends javax.swing.JDialog {
         com.pemkom.objects.Murid murid = new com.pemkom.objects.Murid(uidRfid, namaLengkap, namaSekolah);
         muridDAO.save(murid);
 
-        javax.swing.JOptionPane.showMessageDialog(this, "Data berhasil disimpan!");
+        javax.swing.JOptionPane.showMessageDialog(this, I18nService.get("ui.msg.berhasilSimpan"));
         dispose();
     }//GEN-LAST:event_roundedButtonOKActionPerformed
 

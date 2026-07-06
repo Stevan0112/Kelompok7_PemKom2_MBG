@@ -4,17 +4,16 @@
  */
 package GUI;
 
-/**
- *
- * @author LENOVO
- */
-public class AddSekolah extends javax.swing.JDialog {
+import com.pemkom.objects.services.I18nService;
+
+public class AddSekolah extends javax.swing.JDialog implements I18nService.I18nChangeListener {
 
     public AddSekolah(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(parent);
-
+        I18nService.registerListener(this);
+        onLanguageChanged();
     }
 
     private String generateIdSekolah() {
@@ -37,6 +36,22 @@ public class AddSekolah extends javax.swing.JDialog {
         }
 
         return String.format("S%03d", maxId + 1);
+    }
+
+    @Override
+    public void onLanguageChanged() {
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            jLabel1.setText(I18nService.get("ui.label.namaSekolah"));
+            jLabel2.setText(I18nService.get("ui.label.alamat"));
+            roundedButtonCancel.setText(I18nService.get("ui.btn.cancel"));
+            roundedButtonOK.setText(I18nService.get("ui.btn.ok"));
+        });
+    }
+
+    @Override
+    public void dispose() {
+        I18nService.unregisterListener(this);
+        super.dispose();
     }
 
     /**
@@ -172,7 +187,7 @@ public class AddSekolah extends javax.swing.JDialog {
         String alamatSekolah = Alamat.getText();
 
         if (namaSekolah.isEmpty() || alamatSekolah.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Semua field harus diisi!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            javax.swing.JOptionPane.showMessageDialog(this, I18nService.get("ui.msg.fieldKosong"), I18nService.get("ui.msg.error"), javax.swing.JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -185,7 +200,7 @@ public class AddSekolah extends javax.swing.JDialog {
         com.pemkom.objects.Sekolah sekolah = new com.pemkom.objects.Sekolah(idSekolah, namaSekolah, alamatSekolah);
         sekolahDAO.save(sekolah);
 
-        javax.swing.JOptionPane.showMessageDialog(this, "Data berhasil disimpan!");
+       javax.swing.JOptionPane.showMessageDialog(this, I18nService.get("ui.msg.berhasilSimpan"));
         dispose();
     }//GEN-LAST:event_roundedButtonOKActionPerformed
 

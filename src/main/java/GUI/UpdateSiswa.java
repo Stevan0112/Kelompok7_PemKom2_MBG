@@ -4,11 +4,9 @@
  */
 package GUI;
 
-/**
- *
- * @author LENOVO
- */
-public class UpdateSiswa extends javax.swing.JDialog {
+import com.pemkom.objects.services.I18nService;
+
+public class UpdateSiswa extends javax.swing.JDialog implements I18nService.I18nChangeListener {
 
     private String muridId;
     private com.fazecast.jSerialComm.SerialPort rfidPort;
@@ -17,14 +15,15 @@ public class UpdateSiswa extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(parent);
-
         this.muridId = id;
         nama.setText(namaSiswa);
         UID.setText(uidSiswa);
         loadSekolah(sekolahSiswa);
         mulaiScanRFID();
-
+        I18nService.registerListener(this);
+        onLanguageChanged();
     }
+    
 
     private void loadSekolah(String sekolahTerpilih) {
         com.mongodb.client.MongoDatabase db = com.pemkom.objects.MongoManager.getDatabase();
@@ -74,7 +73,18 @@ public class UpdateSiswa extends javax.swing.JDialog {
     }
 
     @Override
+    public void onLanguageChanged() {
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            jLabel1.setText(I18nService.get("ui.label.nama"));
+            jLabel2.setText(I18nService.get("ui.label.uid"));
+            roundedButtonCancel.setText(I18nService.get("ui.btn.cancel"));
+            roundedButtonOK.setText(I18nService.get("ui.btn.ok"));
+        });
+    }
+
+    @Override
     public void dispose() {
+        I18nService.unregisterListener(this);
         if (rfidPort != null && rfidPort.isOpen()) {
             rfidPort.closePort();
         }
@@ -241,7 +251,7 @@ public class UpdateSiswa extends javax.swing.JDialog {
         String namaSekolah = sekolah.getSelectedItem().toString();
 
         if (namaLengkap.isEmpty() || uidRfid.isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Semua field harus diisi!", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+           javax.swing.JOptionPane.showMessageDialog(this, I18nService.get("ui.msg.fieldKosong"), I18nService.get("ui.msg.error"), javax.swing.JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -263,14 +273,14 @@ public class UpdateSiswa extends javax.swing.JDialog {
                 muridLama
         );
 
-        javax.swing.JOptionPane.showMessageDialog(this, "Data berhasil diupdate!");
+        javax.swing.JOptionPane.showMessageDialog(this, I18nService.get("ui.msg.berhasilSimpan"));
         dispose();
     }//GEN-LAST:event_roundedButtonOKActionPerformed
 
-/**
- * @param args the command line arguments
- */
-public static void main(String args[]) {
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -281,29 +291,24 @@ public static void main(String args[]) {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
-                
 
-}
+                }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(UpdateSiswa.class  
+            java.util.logging.Logger.getLogger(UpdateSiswa.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
-.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(UpdateSiswa.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
-} catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(UpdateSiswa.class  
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(UpdateSiswa.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
 
-.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-
-} catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(UpdateSiswa.class  
-
-.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-
-} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(UpdateSiswa.class  
-
-.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(UpdateSiswa.class
+                    .getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -313,7 +318,7 @@ public static void main(String args[]) {
                 UpdateSiswa dialog = new UpdateSiswa(new javax.swing.JFrame(), true, "", "", "", "");
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
-public void windowClosing(java.awt.event.WindowEvent e) {
+                    public void windowClosing(java.awt.event.WindowEvent e) {
                         System.exit(0);
                     }
                 });

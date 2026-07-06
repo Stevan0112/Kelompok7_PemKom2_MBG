@@ -60,7 +60,7 @@ public class settings extends javax.swing.JPanel implements I18nService.I18nChan
 
         setBackground(new java.awt.Color(255, 255, 255));
 
-        jPanel1.setBackground(new java.awt.Color(0, 51, 102));
+        jPanel1.setBackground(new java.awt.Color(119, 183, 226));
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 40)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
